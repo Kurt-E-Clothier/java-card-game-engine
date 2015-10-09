@@ -1,7 +1,7 @@
 ######################################################
 # French Suit Deck with Jokers Configuration File
 ######################################################
-deck french-suits-with-joker
+deck french_suits-with_jokers
 size 54
 types null,ace,2,3,4,5,6,7,8,9,jack,queen,king,joker
 category suits
