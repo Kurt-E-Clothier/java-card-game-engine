@@ -60,7 +60,8 @@ cardpile
 	visibility <all, owner, other, none>
 	visible <[0, n], all, none, top>
 	placement <stack, spread, spaced, messy>
-	orientation <horizontal, veritcal>
+	orientation <portrait, landscape>
+	tiling <horizontal, veritcal>
 	removal <top, bottom, random, any, none, all>
 
 ################
