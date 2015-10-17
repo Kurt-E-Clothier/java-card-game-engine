@@ -26,7 +26,7 @@ The MIT License (MIT). See LICENSE.txt.
 	|		|
 	|		|___/engine			=> games engine package
 	|			|
-	|			|___/utils			=> engine utilities
+	|			|___/util			=> engine utilities
 	|
 	|___LICENSE.txt		=> License and warranty info
 	|

@@ -1,0 +1,32 @@
+######################################################
+# Idiot Game Rules Configuration File
+#
+# Comments start with the <#> symbol and terminate at the EOL
+# Keywords should be on their own line, followed by whitespace and the associated value(s)
+# Whitespace is ignored for comma separated values
+# Numerical representations begin with 0
+######################################################
+
+game idiot
+
+deck french_suits
+ranking 2,3,4,5,6,7,8,9,10,jack,queen,king,ace
+alias 2 restart
+alias 5 reverse
+alias 10 burn
+
+board idiot
+
+direction-of-play cw
+
+deal
+	direction cw
+	collate no
+	player-piles
+		reserve-fd 3
+		reserve-fu 3
+		hand 3
+	common-piles
+		stock all
+
+# RULES .... ?

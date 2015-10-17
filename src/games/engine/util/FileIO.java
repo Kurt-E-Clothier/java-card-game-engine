@@ -58,7 +58,7 @@ public final class FileIO {
 	 * @return	file using the given type and game if it exists.
 	 */
 	public static File getFile(FileIO.Type type, String name) {
-		return FileIO.getFile(FileIO.createFilenmae(type, name));
+		return FileIO.getFile(FileIO.getFilenmae(type, name));
 	}
 	
 	/**
@@ -76,13 +76,13 @@ public final class FileIO {
 	}
 	
 	/**
-	 * Returns a valid filename (without full path) from the given type and game
+	 * Returns a valid filename (without full path) from the given type and name
 	 * 
 	 * @param type	the type of file to be created
 	 * @param name	what is described by this file
 	 * @return	valid filename (without full path) from the given type and name
 	 */
-	public static String createFilenmae(FileIO.Type type, String name) {
+	public static String getFilenmae(FileIO.Type type, String name) {
 		StringBuilder str = new StringBuilder();
 		str.append(type.toString().toLowerCase());
 		str.append(".");

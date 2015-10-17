@@ -132,7 +132,9 @@ public class FileCopy {
 		int ndx = indexOf(keyword);
 		if (ndx >= 0) {
 			String[] words = lines.get(ndx).split("\\s", 2);
-			return words[1].replaceAll("\\s", "");
+			if (words.length > 1) {
+				return words[1].replaceAll("\\s", "");
+			}
 		}
 		return null;
 	}
@@ -188,7 +190,10 @@ public class FileCopy {
 	 * @return	array of strings that were comma separated.
 	 */
 	protected static String[] splitCSV(String csv) {
-		return csv.split(",");
+		if (csv != null) {
+			return csv.split(",");
+		}
+		return null;
 	}
 	
 	/**

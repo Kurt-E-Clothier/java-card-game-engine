@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>7</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>112</x>
+      <y>273</y>
+      <w>147</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>PlayingCard
+--
+- face : String
+- value : int
+- group : String
+--
++ getFace() : String
++ getValue() : int
++ getGroup() : String
++ compareTo(card : Object) : int
++ toString() : String
++ equals() : boolean
++ hashCode() : int
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>28</x>
+      <y>301</y>
+      <w>98</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=4</panel_attributes>
+    <additional_attributes>10.0;10.0;120.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>98</x>
+      <y>245</y>
+      <w>630</w>
+      <h>546</h>
+    </coordinates>
+    <panel_attributes>util
+--
+bg=orange
+
+layer=2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>175</x>
+      <y>406</y>
+      <w>63</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+cards 0..*
+layer=4</panel_attributes>
+    <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLInterface</id>
+    <coordinates>
+      <x>973</x>
+      <y>847</y>
+      <w>56</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Runnable</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>826</x>
+      <y>280</y>
+      <w>189</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>ScreenFactory
+--
+- screen : Screen
+- game : GameGUI
+--
+~ getCurrentScreen() : Screen
+~ displayScreen(screen : Screen) : void
+~ getGame() : GameGUI
+
+layer=4
+bg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>826</x>
+      <y>399</y>
+      <w>189</w>
+      <h>105</h>
+    </coordinates>
+    <panel_attributes>GameGUI
+--
+- window : JFrame
+- factory : ScreenFactory
+- gameThread : GameThread
+- mouseListener : MouseListener
+- keyListener : KeyListener
+--
+
+layer=4
+bg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1057</x>
+      <y>280</y>
+      <w>147</w>
+      <h>91</h>
+    </coordinates>
+    <panel_attributes>/Screen/
+--
+- factory : ScreenFactory
+--
+/~ onCreate()/
+/~ onUpdate()/
+/~ onDraw()/
+~ getFactory() : ScreenFactory
+
+layer=4
+bg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1008</x>
+      <y>287</y>
+      <w>63</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-&gt;</panel_attributes>
+    <additional_attributes>70.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1057</x>
+      <y>399</y>
+      <w>147</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>GameScreen
+--
+
+layer=4
+bg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1120</x>
+      <y>364</y>
+      <w>21</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>910</x>
+      <y>357</y>
+      <w>21</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1008</x>
+      <y>413</y>
+      <w>63</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>70.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>826</x>
+      <y>532</y>
+      <w>189</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>GameThread
+--
+game : GameGUI
+--
+~ paint(g : Graphics) : void
+
+layer=4
+bg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>910</x>
+      <y>497</y>
+      <w>21</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLInterface</id>
+    <coordinates>
+      <x>0</x>
+      <y>301</y>
+      <w>63</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Comparable
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>987</x>
+      <y>581</y>
+      <w>21</w>
+      <h>287</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=4</panel_attributes>
+    <additional_attributes>10.0;390.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>238</x>
+      <y>882</y>
+      <w>119</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>deck.cards.txt
+
+- Info about deck of cards to use
+
+bg=green
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>105</x>
+      <y>882</y>
+      <w>119</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>rules.game.txt
+
+- Info about rules to use in the game
+
+bg=green
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>371</x>
+      <y>882</y>
+      <w>119</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>board.game.txt
+
+- Info about game board to use
+
+bg=green
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>77</x>
+      <y>210</y>
+      <w>1190</w>
+      <h>595</h>
+    </coordinates>
+    <panel_attributes>engine
+--
+
+layer=1
+bg=yellow
+fg=black</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>63</x>
+      <y>189</y>
+      <w>1225</w>
+      <h>644</h>
+    </coordinates>
+    <panel_attributes>games
+--
+bg=white
+layer=-0
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>770</x>
+      <y>245</y>
+      <w>469</w>
+      <h>357</h>
+    </coordinates>
+    <panel_attributes>gui
+--
+bg=orange
+
+layer=2</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>112</x>
+      <y>469</y>
+      <w>147</w>
+      <h>175</h>
+    </coordinates>
+    <panel_attributes>Deck
+--
+- SIZE : int
+- name : String
+- grouping : String
+- cards : PlayingCard [0..SIZE]
+- groups : String []
+- faces : String[]
+- deckFile : FileCopy
+--
++ getName() : String
++ size() : int
++ getGrouping() : String
++ shuffle() : void
++ deal() : PlayingCard
++ dealAll() : PlayingCard[]
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>329</x>
+      <y>525</y>
+      <w>175</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>FileCopy
+--
+- lines : List&lt;String&gt;
+--
+~ FileCopy(file : File)
+~ getParams(keyword : String) : String
+~ indexOf(keyword : String) : int
+~ splitCSV(csv : String) : String
+~ getLine(index : int) : String
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>252</x>
+      <y>532</y>
+      <w>91</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+deckFile 1
+layer=4</panel_attributes>
+    <additional_attributes>10.0;20.0;110.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>112</x>
+      <y>672</y>
+      <w>147</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>/FileIO/
+--
+
+--
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>63</x>
+      <y>847</y>
+      <w>448</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>plugin
+--
+bg=white
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>329</x>
+      <y>273</y>
+      <w>217</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>CardPile
+--
+- size : int
+- name : String
+- owner : Player
+- cards : PlayingCard [0..size]
+- visibility : Visibility
+- arrangement : Arrangement
+- Orientation : Orientation
+- numVisible : int
+- tiling : Tiling
+- removal : Removal
+--
++ shuffle() : void
++ sort() : void
++ get() : PlayingCard
++ get(number : int) PlayingCard[]
++ replace(card : PlayingCard) : boolean
++ exchange(card : PlayingCard) : Playing Card
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>252</x>
+      <y>287</y>
+      <w>91</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+cards 0..*
+layer=4</panel_attributes>
+    <additional_attributes>110.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>581</x>
+      <y>525</y>
+      <w>126</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>GameBoard
+--
+- piles : CardPile[]
+- boardFile : FileCopy
+--
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>497</x>
+      <y>539</y>
+      <w>98</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+boardFile 1
+layer=4</panel_attributes>
+    <additional_attributes>120.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>539</x>
+      <y>427</y>
+      <w>154</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+piles 0..*
+layer=4</panel_attributes>
+    <additional_attributes>150.0;140.0;150.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>329</x>
+      <y>672</y>
+      <w>175</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>CardGame
+--
+- rulesFile : FileCopy
+- board : GameBoard
+- deck : Deck
+--
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>497</x>
+      <y>595</y>
+      <w>98</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+board 1
+layer=4</panel_attributes>
+    <additional_attributes>10.0;120.0;60.0;120.0;60.0;10.0;120.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>252</x>
+      <y>602</y>
+      <w>91</w>
+      <h>91</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+deck 1
+layer=4</panel_attributes>
+    <additional_attributes>110.0;110.0;70.0;110.0;70.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>406</x>
+      <y>616</y>
+      <w>63</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+rulesFile 1
+layer=4</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>252</x>
+      <y>693</y>
+      <w>91</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+layer=4</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>756</x>
+      <y>644</y>
+      <w>217</w>
+      <h>91</h>
+    </coordinates>
+    <panel_attributes>CardGameEngine
+--
+- game : CardGame
+--
+
+
+bg=pink
+layer=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>497</x>
+      <y>693</y>
+      <w>273</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+layer=4</panel_attributes>
+    <additional_attributes>10.0;10.0;370.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>882</x>
+      <y>581</y>
+      <w>21</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+layer=4</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>210</x>
+      <y>714</y>
+      <w>224</w>
+      <h>182</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+layer=4</panel_attributes>
+    <additional_attributes>300.0;240.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>175</x>
+      <y>714</y>
+      <w>133</w>
+      <h>182</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+layer=4</panel_attributes>
+    <additional_attributes>170.0;240.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>154</x>
+      <y>714</y>
+      <w>21</w>
+      <h>182</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+layer=4</panel_attributes>
+    <additional_attributes>10.0;240.0;10.0;10.0</additional_attributes>
+  </element>
+</diagram>

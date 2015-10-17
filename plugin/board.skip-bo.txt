@@ -125,11 +125,11 @@ board-layout
 	
 	# Common card piles Layout
 	common-piles
-		glue stock space space space build1 space build2 space build3 space build4 glue
+		glue stock space space build1 space build2 space build3 space build4 glue
 		
 	# Player card piles layout
 	player-piles
-		glue discard4 space discard3 space discard2 space discard1 space space space stock glue
+		glue discard4 space discard3 space discard2 space discard1 space space stock glue
 		glue hand glue	
 	
 	

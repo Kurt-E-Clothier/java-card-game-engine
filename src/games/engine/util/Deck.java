@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			Deck.java
 * @author		Kurt E. Clothier
-* @date			October 12, 2015
+* @date			October 15, 2015
 *
 * @breif		Deck of Playing Cards for a card game
 *
@@ -17,9 +17,9 @@
 package games.engine.util;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /************************************************************************
  * The Deck Class
@@ -42,7 +42,9 @@ public class Deck {
 	private final boolean quantitySpecified;	// True if specify-quantity is set to "yes"
 	private final boolean groupingSpecified;	// True if grouping & groups are non null
 	private final PlayingCard[] cards;			// Set of cards for this deck
-	
+	private Random rand;						// Random number for shuffling
+	private int dealNdx;
+
 /*------------------------------------------------
  	Constructor(s)
  ------------------------------------------------*/
@@ -80,40 +82,35 @@ public class Deck {
 		groupingSpecified = tmp;
 		
 		// Generate the playing cards from deck file
-		cards = new PlayingCard[size];		
-		int fileNdx = deckFile.indexOf("cards");
-		if (fileNdx >= 0) {
-			
-			// Put all of the card data into one string
-			StringBuilder str = new StringBuilder();
-			while(++fileNdx < deckFile.size()) {
-				str.append(deckFile.getLine(fileNdx));
-				// Handle trailing ',' if present in deck file
-				if (str.charAt(str.length() - 1) != ',')
-					str.append(",");
-			}
-			str.setLength(Math.max(str.length() - 1, 0));	// remove final ","
-			String cardData = str.toString().replaceAll("\\s", "");
-			
-			// Split CSV 
-			String[] cardsData = FileCopy.splitCSV(cardData);
-			
-			// Variables for creating cards
-			int dataNdx = 0;
-			int quantity = 0;
-			int cardNdx = 0;
-			int tmpNdx = 0;
-			int faceNdx = 0;
-			int groupNdx = 0;
-			int rank = 0;
-			boolean firstPass = false;
-			
-			do {
-				tmpNdx = dataNdx;
-				quantity = 1;
-				firstPass = true;
+		if (size == 0) {
+			cards = null;
+		} else {
+			cards = new PlayingCard[size];		
+			int fileNdx = deckFile.indexOf("cards");
+			if (fileNdx >= 0) {
+				
+				// Put all of the card data into one string
+				StringBuilder str = new StringBuilder();
+				while(++fileNdx < deckFile.size()) {
+					str.append(deckFile.getLine(fileNdx));
+					// Handle trailing ',' if present in deck file
+					if (str.charAt(str.length() - 1) != ',')
+						str.append(",");
+				}
+				str.setLength(Math.max(str.length() - 1, 0));	// remove final ","
+				String cardData = str.toString().replaceAll("\\s", "");
+				
+				// Split CSV 
+				String[] cardsData = FileCopy.splitCSV(cardData);
+				
+				// Create Deck of Cards
+				int dataNdx = 0;
+				int quantity = 0;
+				int cardNdx = 0;
+				int faceNdx = 0;
+				int groupNdx = 0;
+				int rank = 0;
 				do {
-					dataNdx = tmpNdx;
 					faceNdx = Integer.parseInt(cardsData[dataNdx]);
 					if (ranking != null) {
 						rank = ranking.get(faces[faceNdx]);
@@ -123,24 +120,26 @@ public class Deck {
 					if (groupingSpecified) {
 						groupNdx = Integer.parseInt(cardsData[dataNdx + 1]);
 						cards[cardNdx] = new PlayingCard(faces[faceNdx], rank, groups[groupNdx]);
-						dataNdx++;
+						dataNdx+=2;
 					} else {
 						cards[cardNdx] = new PlayingCard(faces[faceNdx], rank);
+						dataNdx++;
 					}
 					cardNdx++;
-					
+						
 					// Make this card again, if specified
 					if (quantitySpecified) {
-						dataNdx++;
-						if (firstPass) {
-							firstPass = false;
-							quantity = Integer.parseInt(cardsData[dataNdx]);
+						quantity = Integer.parseInt(cardsData[dataNdx]);
+						while (--quantity > 0) {
+							cards[cardNdx] = new PlayingCard(cards[cardNdx-1]);
+							cardNdx++;
 						}
+						dataNdx++;
 					}
-				} while (--quantity > 0);
-				dataNdx++;
-			} while (cardNdx < size);
+				} while (cardNdx < size);
+			}
 		}
+		dealNdx = 0;
 	}
 	
 /*------------------------------------------------
@@ -151,7 +150,7 @@ public class Deck {
 	 * 
 	 * @return the name of this deck
 	 */
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 	
@@ -160,7 +159,7 @@ public class Deck {
 	 * 
 	 * @return the name of this deck
 	 */
-	protected String getGrouping() {
+	public String getGrouping() {
 		return grouping;
 	}
 	
@@ -169,10 +168,76 @@ public class Deck {
 	 * 
 	 * @return the size of this deck
 	 */
-	protected int size() {
+	public int size() {
 		return size;
 	}
 	
+/*------------------------------------------------
+    Utilties
+ ------------------------------------------------*/
+	/**
+	 * Returns a Playing Card from this Deck.
+	 * 
+	 * @return a Playing Card from this Deck
+	 */
+	public PlayingCard deal() {
+		if (dealNdx < size) {
+			return cards[dealNdx++];
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a number of Playing Cards from this deck
+	 *  
+	 * @param number	how many cards to return
+	 * @return	a number of cards from this deck
+	 */
+	public PlayingCard[] deal(final int number) {
+		PlayingCard[] tmpCards = null;
+		if (dealNdx < size) {
+			tmpCards = new PlayingCard[number];
+			for (int i = 0; i < number; i++) {
+				tmpCards[i] = cards[dealNdx];
+				dealNdx--;
+			}
+		}
+		return tmpCards;
+	}
+	
+	/**
+	 * Returns an array of all remaining playing cards in this deck.
+	 * 
+	 * @return an array of all remaining playing cards in this deck
+	 */
+	public PlayingCard[] dealAll() {
+		PlayingCard[] tmpCards = null;
+		if (dealNdx < size) {
+			tmpCards = new PlayingCard[size - dealNdx];
+			for (int i = size - dealNdx - 1; i >= 0; i--) {
+				tmpCards[i] = cards[dealNdx];
+				dealNdx--;
+			}
+		}
+		return tmpCards;
+	}
+	
+	/**
+	 * Shuffle this deck of cards.
+	 */
+	public void shuffle() {
+		int ndx = 0;
+		PlayingCard card = null;
+		rand = ThreadLocalRandom.current();
+		// Durstenfeld updated Fisher-Yates shuffle
+		for (int i = cards.length - 1; i > 0; i--) {
+			ndx = rand.nextInt(i + 1);
+			card = cards[ndx];
+			cards[ndx] = cards[i];
+			cards[i] = card;
+		}
+	}
+
 	/**
 	 * Return information about the deck.
 	 */
@@ -189,38 +254,19 @@ public class Deck {
 		return str.toString();
 	}
 	
+	/**
+	 * Return verbose information about the deck.
+	 */
 	public String toStringVerbose() {
 		StringBuilder str = new StringBuilder();
 		String NEW_LINE = System.getProperty("line.separator");
 		str.append(this.toString());
-		for (PlayingCard card : cards) {
-			str.append(NEW_LINE);
-			str.append(card.toString());
+		if (cards != null) {
+			for (PlayingCard card : cards) {
+				str.append(NEW_LINE);
+				str.append(card.toString());
+			}
 		}
 		return str.toString();
 	}
-
-/*------------------------------------------------
- 	Main Method
- ------------------------------------------------*/
-	public static void main(String[] args) {
-		
-		System.out.println(" --- Deck Test Driver ---\n");
-		int capacity = 13;
-		Map<String, Integer> val = new HashMap<String, Integer>((int)(capacity/0.75 +1));
-		
-		// Testing Idiot
-		File file = FileIO.getFile(FileIO.Type.DECK, "french_suits");
-		for (Integer x = 2; x < 11; x++) {
-			val.put(x.toString(), x);
-		}
-		val.put("jack", 11);
-		val.put("queen", 12);
-		val.put("king", 13);
-		val.put("ace", 14);
-		
-		Deck deck = new Deck(file, val);
-		System.out.println(deck.toStringVerbose());
-	}
-
 }

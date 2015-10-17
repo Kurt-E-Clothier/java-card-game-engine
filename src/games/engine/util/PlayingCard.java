@@ -97,7 +97,7 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable{
 	 * 
 	 * @return the face on this card
 	 */
-	protected String getFace() {
+	public String getFace() {
 		return face;
 	}
 
@@ -106,7 +106,7 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable{
 	 * 
 	 * @return the numerical value of this card
 	 */
-	protected int getValue() {
+	public int getValue() {
 		return value;
 	}
 	
@@ -115,7 +115,7 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable{
 	 * 
 	 * @return the numerical value of this card
 	 */
-	protected int getRank() {
+	public int getRank() {
 		return value;
 	}
 	
@@ -124,7 +124,7 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable{
 	 * 
 	 * @return the group of this card
 	 */
-	protected String getGroup() {
+	public String getGroup() {
 		return group;
 	}
 
