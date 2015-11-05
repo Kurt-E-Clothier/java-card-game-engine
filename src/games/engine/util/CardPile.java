@@ -58,14 +58,15 @@ public class CardPile {
 	 */
 	public static enum Orientation { HORIZONTAL, VERTICAL }
 	
-	private final String name;
-	private final int capacity;
+	private final String name = "";
+/*	private final int capacity;
 	private final Owner owner;
 	private final Visibility visibility;
 	private final Arrangement arrangement;
 	private final Orientation orientation;
-	
+*/
 	private int remaining;
+	private int size;
 	
 	private PlayingCard top;
 	private PlayingCard[] cards;
@@ -77,7 +78,7 @@ public class CardPile {
 	/**
 	 * Construct a blank <tt>PlayingCard</tt>.
 	 */
-	protected Deck() {
+	protected void Deck() {
 		//TODO - Read deck.<game>.txt file to create cards
 	}
 	

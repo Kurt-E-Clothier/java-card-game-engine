@@ -15,6 +15,7 @@
 
 package games.engine.util;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public final class CardGame {
 /*------------------------------------------------
  	Constructor(s)
  ------------------------------------------------*/
-	/**
+	/*
 	 * Construct a <tt>CardGame</tt> using the rules file.
 	 * 
 	 * @param file 	Rules file used to construct this game
@@ -76,11 +77,15 @@ public final class CardGame {
  ------------------------------------------------*/
 	public static void main(String[] args) {
 		System.out.println("--- CardGame Test Bench ---");
-		
+
+		JFrame board = new GameGUI();
+		board.setVisible(true);
+
 		File file = FileIO.getFile(FileIO.Type.RULES, "idiot");
 		CardGame game = new CardGame(file);
 		Deck deck = game.getDeck();
 		deck.shuffle();
+
 		System.out.println(deck.toStringVerbose());
 		System.out.println(deck.deal().toString());
 		System.out.println(deck.deal().toString());
