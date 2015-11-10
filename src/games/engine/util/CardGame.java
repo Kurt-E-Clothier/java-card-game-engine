@@ -15,6 +15,8 @@
 
 package games.engine.util;
 
+import games.engine.gui.GameGUI;
+
 import javax.swing.*;
 import java.io.File;
 import java.util.HashMap;
