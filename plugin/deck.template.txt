@@ -1,0 +1,55 @@
+######################################################
+# Template Deck Configuration File
+#
+# Comments start with the <#> symbol and terminate at the EOL
+# Keywords should be on their own line, followed by 1 space and the associated value(s)
+# Whitespace is ignored for comma separated values
+# Value numerical representations begin with 0
+######################################################
+
+# The name of the deck, no whitespace
+deck <name>
+
+# How many cards are in the deck, positive integers (negative and decimals are ignored)
+size [1, n]
+
+# List the face faces (names) of cards, comma separated, for example: 2,3,queen,king OR 7,8,skip,draw-four
+# The keyword <null> can be used in lists of comma separated values in order to skip that numerical value. 
+# This is especially useful in numbered decks that do not start at number 0.
+# For example,
+#	values null,ace,2,3
+# This will set the <ace> to a value of 1 and <2> to a value of 2.
+# Note, the order of this list does not determine the card heirarchy, as such orders are dependent upon the game rules.
+faces
+
+# (Optional) This option can be used to specify card groups, for example: suits OR colors; Default = null
+# Specify null if there are no card groups, such as in a specialty decks like "Skip-Bo" or "Old Maid"
+grouping null
+
+# (Optional) If the grouping is specified and non-null, list the groups here, comma separated
+# For example,
+#	grouping suits
+#	groups hearts,diamonds,clubs,spades
+#
+#	grouping types
+#	groups monster,spell,trap
+groups
+
+# (Optional) Set this as yes to specify the quantity of each individual card; Default  = no
+specify-quantity no
+
+# Specify the individual cards used in this deck, comma separated, whitespace is ignored
+# Format: <value1>,<group1>,<quantity1>, ... <valueN>,<groupN>,<quantityN>
+# Numbers representing the value and types previously specified should be used.
+#
+# For example, A deck composed of 2 of every type of Ace plus 1 Queen of Hearts might look like this:
+#	faces ace,9,jack,queen,king
+#	grouping suits
+#	groups hearts,diamonds,clubs,spades
+#	specify-quantity yes
+#	cards
+#		0,0,2				# ace,hearts,2
+#		0,1,2, 0,2,2, 0,3,2	# other aces
+#		3,0,1				# queen,hearts,1
+cards
+

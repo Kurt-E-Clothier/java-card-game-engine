@@ -1,0 +1,62 @@
+######################################################
+# Idiot Game Rules Configuration File
+#
+# Comments start with the <#> symbol and terminate at the EOL
+# Keywords should be on their own line, followed by whitespace and the associated value(s)
+# Whitespace is ignored for comma separated values
+# Numerical representations begin with 0
+######################################################
+
+game test
+
+players 2-4
+
+# dealer as player ??? (blackjack)
+
+deck test
+ranking 2,3,4,5,6,7,8,9,10,jack,queen,king,ace
+alias 2 restart
+alias 5 reverse
+alias 10 burn
+
+board test
+
+direction-of-play cw
+
+deal
+	direction cw
+	collate no
+	player-piles
+		reserve-fd 3
+		reserve-fu 3
+		hand 3
+	common-piles
+		stock all
+deal-end
+
+# RULES .... ?
+
+#rule id string
+#valid comparisons: =,<,>,<=,>=,!= 
+# a card's card piles is <owner> <name>
+#assert card <current pile> <location (top, bottom, top-1, top-2, etc)> <face, rank, group> <comparison> <string, number, another card>
+#assert $card <face, rank, group> <comparison> <string, number, another card>
+# Currently, only concerned with cardpile size.. more can be added later, like <contains> card
+#assert cardpile <owner> <name> <size> <comparison> <number>
+#assert $cardpile <size> <comparison> <number>
+
+rule compare top 4
+assert cardpile common discard size
+
+
+if 	common.discard.size >= 4 and
+	common.discard.top = common.discard.top-1 and
+	common.discard.top = common.discard.top-2 and
+	common.discard.top = common.discard.top-3 then
+	operation 1
+
+rule 18
+if 	player.hand.size < 3 and
+	common.stock.size > 0 then
+	operation 2
+
