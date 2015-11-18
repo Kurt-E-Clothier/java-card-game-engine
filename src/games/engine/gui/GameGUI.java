@@ -8,8 +8,8 @@ import javax.swing.*;
 public class GameGUI extends JFrame {
 
     public GameGUI() {
-        int width = 800;
-        int height = 600;
+        final int width = 800;
+        final int height = 600;
 
         this.setSize(width, height);
     }

@@ -1,3 +1,5 @@
+package games.engine.gui;
+
 import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.event.*;
@@ -69,41 +71,42 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
     Dimension screenSize;
 
 
-    MainGUI()
-    {   
+    MainGUI() {
 
-    MediaTracker tracker = new MediaTracker(this);
-    Toolkit toolkit = Toolkit.getDefaultToolkit();
-    
-    cardspic = toolkit.getImage(this.getClass().getResource("Images/cards.gif"));
-    back = toolkit.getImage(this.getClass().getResource("Images/back.gif"));
-    backSW = toolkit.getImage(this.getClass().getResource("Images/backSW.gif"));
-    title = toolkit.getImage(this.getClass().getResource("Images/Title.jpg"));
-    pointer[0] = toolkit.getImage(this.getClass().getResource("Images/pointer.gif"));
-    burntPic = toolkit.getImage(this.getClass().getResource("Images/burnt.jpg"));
+        MediaTracker tracker = new MediaTracker(this);
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-    tracker.addImage(cardspic, 1);
-    tracker.addImage(back, 1);
-    tracker.addImage(backSW, 1);
-    tracker.addImage(title, 1);
-    tracker.addImage(pointer[0], 1);
-    tracker.addImage(burntPic, 1);
+        cardspic = toolkit.getImage(this.getClass().getResource("Images/cards.gif"));
+        back = toolkit.getImage(this.getClass().getResource("Images/back.gif"));
+        backSW = toolkit.getImage(this.getClass().getResource("Images/backSW.gif"));
+        title = toolkit.getImage(this.getClass().getResource("Images/Title.jpg"));
+        pointer[0] = toolkit.getImage(this.getClass().getResource("Images/pointer.gif"));
+        burntPic = toolkit.getImage(this.getClass().getResource("Images/burnt.jpg"));
 
-    try {
-        tracker.waitForAll();
-    } catch (InterruptedException e) {
-        msg.setText("Image load Error " + e);
+        tracker.addImage(cardspic, 1);
+        tracker.addImage(back, 1);
+        tracker.addImage(backSW, 1);
+        tracker.addImage(title, 1);
+        tracker.addImage(pointer[0], 1);
+        tracker.addImage(burntPic, 1);
+
+        try {
+            tracker.waitForAll();
+        } catch (InterruptedException e) {
+            msg.setText("Image load Error " + e);
+        }
     }
-    
-    public static void main(String[] args){
-    	    try{   
-    	     MainGUI frame = new MainGUI();
-    	     frame.setTitle("Card Game");
-    	     frame.setResizable(false);
 
-    	     frame.pack();
-    	     frame.setVisible(true);
-    	     }catch(Exception e){
-    	        System.out.println("Game Error: " + e); 
-    	     }
-    	  }
+    public static void main(String[] args) {
+        try {
+            MainGUI frame = new MainGUI();
+            frame.setTitle("Card Game");
+            frame.setResizable(false);
+
+            frame.pack();
+            frame.setVisible(true);
+        } catch (Exception e) {
+            System.out.println("Game Error: " + e);
+        }
+    }
+}
