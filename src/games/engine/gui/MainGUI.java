@@ -95,6 +95,10 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
         } catch (InterruptedException e) {
             msg.setText("Image load Error " + e);
         }
+        
+        pointer[3] = rotatePointer(pointer[0]);
+        pointer[2] = rotatePointer(pointer[3]);
+        pointer[1] = rotatePointer(pointer[2]);
     }
 
     public static void main(String[] args) {
