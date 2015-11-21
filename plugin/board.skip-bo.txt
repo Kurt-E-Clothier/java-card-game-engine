@@ -2,7 +2,7 @@
 # Skip-Bo Card Game Board Configuration File
 # Card pile names must match those in rules!
 ######################################################
-game skip-bo
+name skip-bo
 
 # stock card pile is the left over cards after hands are dealt
 cardpile

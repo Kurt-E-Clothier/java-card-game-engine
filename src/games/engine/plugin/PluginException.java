@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			PluginException.java
 * @author		Kurt E. Clothier
-* @date			November 13, 2015
+* @date			November 18, 2015
 *
 * @breif		Special exception for plugin text files
 *
@@ -14,7 +14,7 @@
 * @copyright	The MIT License (MIT) - see LICENSE.txt
 ****************************************************************************/
 
-package games.engine.util;
+package games.engine.plugin;
 
 /******************************************************************//**
  * The PluginException Class
@@ -27,8 +27,8 @@ package games.engine.util;
  * - Conflicts between keyword parameters 
  ********************************************************************/
 public class PluginException extends Exception {
-
-	private static final long serialVersionUID = -3242624779739027405L;
+	
+	private static final long serialVersionUID = -1067733586071491339L;
 	private static final String IN_PLUGIN = "\" in plugin: ";
 	private static final String UNKNOWN_VAR = "UNKNOWN";
 
@@ -42,6 +42,7 @@ public class PluginException extends Exception {
 	 * FILE_READ_ERROR - Error reading pugin file.
 	 */
 	public static enum Type { 	INVALID_PARAMETER,
+								MISSING_PARAMETER,
 								MISSING_KEYWORD,
 								DOES_NOT_EXIST,
 								INVALID_NAME,
@@ -138,11 +139,24 @@ public class PluginException extends Exception {
 	 * Creates and returns a new <tt>PluginException</tt>.
 	 * 
 	 * @param type	specific type of plugin exception
+	 * @param plugin plugin causing this exception
 	 * @param vars optional identifiers (in this order): filename, keyword, parameter
 	 * @return new PluginException
 	 */
-	public static final PluginException create(final PluginException.Type type, final String... vars) { 
-		return PluginException.create(type, null, vars);
+	public static final PluginException create(final PluginException.Type type, final Plugin plugin, final String... vars) { 
+		return PluginException.create(type, null, plugin, vars);
+	}
+	
+	/**
+	 * Creates and returns a new <tt>PluginException</tt>.
+	 * 
+	 * @param type	specific type of plugin exception
+	 * @param pluginFilename pluginFilename of the Plugin causing this exception
+	 * @param vars optional identifiers (in this order): filename, keyword, parameter
+	 * @return new PluginException
+	 */
+	public static final PluginException create(final PluginException.Type type, final PluginFilename pluginFilename, final String... vars) { 
+		return PluginException.create(type, null, pluginFilename, vars);
 	}
 	
 	/**
@@ -150,13 +164,26 @@ public class PluginException extends Exception {
 	 * 
 	 * @param type	specific type of plugin exception
 	 * @param cause	the original exception which caused this exception to be created
+	 * @param plugin plugin causing this exception
 	 * @param vars optional identifiers (in this order): filename, keyword, parameter
 	 * @return new PluginException
 	 */
-	public static final PluginException create(final PluginException.Type type, final Throwable cause, final String... vars) {
-		String filename = vars.length > 0 ? filename = vars[0] : UNKNOWN_VAR;
-		String keyword = vars.length > 1 ? keyword = vars[1] : UNKNOWN_VAR;
-		String parameter = vars.length > 2 ? parameter = vars[0] : UNKNOWN_VAR;
+	public static final PluginException create(final PluginException.Type type, final Throwable cause, final Plugin plugin, final String... vars) {
+		return PluginException.create(type, cause, plugin.getFilename(), vars);
+	}
+	
+	/**
+	 * Creates and returns a new <tt>PluginException</tt>.
+	 * 
+	 * @param type	specific type of plugin exception
+	 * @param cause	the original exception which caused this exception to be created
+	 * @param pluginFilename pluginFilename of the Plugin causing this exception
+	 * @param vars optional identifiers (in this order): filename, keyword, parameter
+	 * @return new PluginException
+	 */
+	public static final PluginException create(final PluginException.Type type, final Throwable cause, final PluginFilename pluginFilename, final String... vars) {
+		String keyword = vars.length > 0 ? keyword = vars[0] : UNKNOWN_VAR;
+		String parameter = vars.length > 1 ? parameter = vars[1] : UNKNOWN_VAR;
 		final StringBuilder str = new StringBuilder();
 		switch (type) {
 		case INVALID_PARAMETER:
@@ -164,9 +191,19 @@ public class PluginException extends Exception {
 			   .append("\" for keyword \"").append(keyword)
 			   .append(IN_PLUGIN);
 			break;
+		case MISSING_PARAMETER:
+			str.append("Missing parameter for keyword \"").append(keyword);
+			if (vars.length > 1) {
+				str.append("\" or \"").append(parameter);
+			}
+			str.append(IN_PLUGIN);
+			break;
 		case MISSING_KEYWORD:
-			str.append("Missing keyword \"").append(keyword)
-			   .append(IN_PLUGIN);
+			str.append("Missing keyword \"").append(keyword);
+			if (vars.length > 1) {
+				str.append("\" or \"").append(parameter);
+			}
+			str.append(IN_PLUGIN);
 			break;
 		case DOES_NOT_EXIST:
 			str.append("Plugin does not exist: ");
@@ -190,7 +227,7 @@ public class PluginException extends Exception {
 		default:
 			return new PluginException();
 		}
-		str.append(filename);
+		str.append(pluginFilename.toString());
 		return cause == null ?	new PluginException(str.toString(), type) :
 								new PluginException(str.toString(), cause, type);
 	}

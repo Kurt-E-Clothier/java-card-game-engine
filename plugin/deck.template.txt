@@ -8,7 +8,7 @@
 ######################################################
 
 # The name of the deck, no whitespace
-deck <name>
+name <name>
 
 # How many cards are in the deck, positive integers (negative and decimals are ignored)
 size [1, n]

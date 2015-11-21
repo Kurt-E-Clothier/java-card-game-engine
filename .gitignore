@@ -1,4 +1,5 @@
 /bin/
+/backup/
 .project
 .classpath
 .pmd

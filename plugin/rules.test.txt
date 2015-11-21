@@ -7,7 +7,7 @@
 # Numerical representations begin with 0
 ######################################################
 
-game test
+name test
 
 players 2-4
 
@@ -24,6 +24,7 @@ board test
 direction-of-play cw
 
 deal
+	shuffle yes
 	direction cw
 	collate no
 	player-piles

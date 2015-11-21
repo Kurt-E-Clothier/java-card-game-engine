@@ -15,9 +15,7 @@
 
 package games;
 
-import java.io.File;
-import java.util.Map;
-
+import games.engine.plugin.*;
 import games.engine.util.*;
 
 // TODO: Auto-generated Javadoc
@@ -47,7 +45,6 @@ public final class CardGameTB {
 /*------------------------------------------------
     Accessors and Mutators
  ------------------------------------------------*/
-
 	
 /**
  * The main method.
@@ -61,6 +58,16 @@ public final class CardGameTB {
 	public static void main(String[] args) throws PluginException {
 		System.out.println(" --- Card Game Test Bench ---\n");
 		
+		final Plugin rulesPlugin = new Plugin(Plugin.Type.RULES, "test");
+		final Plugin boardPlugin = new Plugin(Plugin.Type.BOARD, rulesPlugin.checkParamsFor(PluginKeyword.BOARD));
+		final Plugin deckPlugin = new Plugin(Plugin.Type.DECK, rulesPlugin.checkParamsFor(PluginKeyword.DECK));
+		Plugin plugin = rulesPlugin;
+		
+		CardGameBoard board = CardGameBoardFactory.INSTANCE.createCardGameBoard(plugin);
+		System.out.println(board.toString());
+		
+
+	/*
 		// Get Rules file
 		File rulesFile = Plugin.createFile(Plugin.Type.RULES, "test");
 		Plugin rulesPlugin = new Plugin(rulesFile);
@@ -69,9 +76,7 @@ public final class CardGameTB {
 		Map<String, Integer> cardRankings = GameComponentFactory.createRankings(rulesPlugin);
 		Plugin deckPlugin = new Plugin(Plugin.Type.DECK, rulesPlugin.checkParams("deck"));
 		Deck deck = GameComponentFactory.createDeck(deckPlugin, cardRankings);
-		
-		/*
-		
+
 		// Create Gameboard
 		Plugin boardPlugin = new Plugin(Plugin.Type.BOARD, rulesPlugin.checkParams("board"));
 		CardGameboard board = GameComponentFactory.createCardGameboard(boardPlugin);
@@ -114,8 +119,6 @@ public final class CardGameTB {
 			System.out.println(c.toString());
 		}
 		
-		*/
-		
 		
 		// Create card game engine
 		//CardGameEngine engine = GameComponentFactory.createCardGameEngine(rulesPlugin, players);
@@ -129,6 +132,8 @@ public final class CardGameTB {
 		
 		//CardGameEngineBuilder test = new CardGameEngineBuilder(rules, null);
 		//System.out.println(board.getSize());
+
+*/
 	}
 	
 }

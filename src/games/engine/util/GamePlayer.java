@@ -1,7 +1,7 @@
 /***********************************************************************//**
-* @file			AbstractPlayer.java
+* @file			GamePlayer.java
 * @author		Kurt E. Clothier
-* @date			November 5, 2015
+* @date			November 20, 2015
 *
 * @breif		Player in a game
 *
@@ -16,30 +16,31 @@
 
 package games.engine.util;
 
+import java.io.Serializable;
+
 /************************************************************************
- * The AbstractPlayer Class
+ * The GamePlayer Class
  * - This class represents a player in a game.
  ************************************************************************/
-public abstract class AbstractPlayer {	
+public class GamePlayer implements Serializable {	
 	
-/** The name. */
+	private static final long serialVersionUID = -4248346240701007222L;
+	
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/
 	private final String name;
-	
-	/** The is my turn. */
 	private boolean isMyTurn;
 	
 /*------------------------------------------------
  	Constructor(s)
  ------------------------------------------------*/
 	/**
- * Construct a <tt>Player</tt> for a game.
- *
- * @param name the name
- */
-	protected AbstractPlayer(final String name) {
+	 * Construct a <tt>GamePlayer</tt>.
+	 *
+	 * @param name the name of this player
+	 */
+	public GamePlayer(final String name) {
 		this.name = name;
 		this.isMyTurn = false;
 	}
@@ -72,6 +73,10 @@ public abstract class AbstractPlayer {
 	 */
 	protected void setTurnAs(final boolean bool) {
 		this.isMyTurn = bool;
+	}
+	
+	@Override public String toString() {
+		return name;
 	}
 
 }

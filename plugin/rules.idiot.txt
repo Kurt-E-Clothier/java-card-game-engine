@@ -7,7 +7,7 @@
 # Numerical representations begin with 0
 ######################################################
 
-game idiot
+name idiot
 
 players 2-4
 

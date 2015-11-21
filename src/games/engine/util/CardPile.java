@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			CardPile.java
 * @author		Kurt E. Clothier
-* @date			November 13, 2015
+* @date			November 19, 2015
 *
 * @breif		A single pile of cards in a game
 *
@@ -16,12 +16,14 @@
 
 package games.engine.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import games.engine.util.PlayingCard;
 
 /******************************************************************//**
  * The CardPile Class
@@ -32,99 +34,19 @@ import java.util.concurrent.ThreadLocalRandom;
  * - Finish sorting methods (and testing)
  * - Integration testing with Board text file
  **********************************************************************/
-public class CardPile {
-	
-/*------------------------------------------------
- 	Keyword Parameter Enumerations
- ------------------------------------------------*/
-	
-	/**
-	 * Specifies who owns this card pile.
-	 * PLAYER: a single player of the game
-	 * COMMON: all players of the game
-	 */
-	public static enum Owner { PLAYER, COMMON }
-	
-	/**
-	 * Specifies who can view this card pile.
-	 * ALL: anyone
-	 * OWNER: only the owner 
-	 * OTHER: anyone but the owner
-	 * NONE: no one
-	 */
-	public static enum Visibility { ALL, OWNER, OTHER, NONE }
-	
-	/**
-	 * Specifies the number of face up cards on top of the pile.
-	 * NUMBER: a number is specified [0, n]
-	 * NONE: no cards are visible
-	 * ALL: all cards are visible
-	 * TOP: just the top card is face up
-	 */
-	public static enum Visible { NUMBER, NONE, ALL, TOP }
-	
-	/**
-	 * Specifies how the pile should be arranged.
-	 * STACKED: all cards in a single stack
-	 * SPREAD: cards slightly spread out
-	 * SPACED: cards do not touch one another
-	 * MESSY: cards are in a messy pile
-	 */
-	public static enum Placement { STACK, SPREAD, SPACED, MESSY }
-	
-	/**
-	 * Specifies how the piles are oriented on the table.
-	 * LANDSCAPE: Cards are placed sideways
-	 * PORTRAIT: Cards are placed upright
-	 */
-	public static enum Orientation { LANDSCAPE, PORTRAIT }
-	
-	/**
-	 * Specifies how the cards are placed with respect to the owner.
-	 * HORIZONTAL: cards are placed from left to right
-	 * VERTICAL: cards are placed from bottom to top
-	 */
-	public static enum Tiling { HORIZONTAL, VERTICAL }
-	
-	/**
-	 * Specifies how card(s) are removed(played) from the pile.
-	 * TOP: Top card removed first
-	 * BOTTOM: Bottom card removed first
-	 * RANDOM: a random card is removed
-	 * ANY: Any card (user selected) is removed
-	 * NONE: Cards are never removed from this pile
-	 * ALL: All cards are removed at once
-	 */
-	public static enum Removal {TOP, BOTTOM, RANDOM, ANY, NONE, ALL}
-	
+public final class CardPile implements Serializable{
+
+	//private static final long serialVersionUID = 6688290548979452850L;
+
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/	
-	private static final String NEW_LINE = System.getProperty("line.separator");
-	private final String name;
-	private final CardPile.Owner owner;
-	private final CardPile.Visibility visibility;
-	private final CardPile.Visible visible;
-	private final CardPile.Placement placement;
-	private final CardPile.Orientation orientation;
-	private final CardPile.Tiling tiling;
-	private final CardPile.Removal removal;
-	private final int numVisible;
+	private final CardPileParameter parameters;
 	private final List<PlayingCard> cards;
 	
 /*------------------------------------------------
  	Constructor(s)
  ------------------------------------------------*/
-
-	
-	/**
-	 * Construct an empty <tt>CardPile</tt>.
-	 * 
-	 * @param pile	a file copy containing information about this card pile
-	 * @param deck	reference to the deck of cards
-	 * @throws FileParameterException	missing keywords or invalid parameters
-	 */
-	
 	/**
 	 * Construct an empty <tt>CardPile</tt> with the specified attributes.
 	 * 
@@ -137,20 +59,8 @@ public class CardPile {
 	 * @param tiling how are the cards in this pile tiled
 	 * @param removal how are cards removed from this pile
 	 */
-	public CardPile(final String name, final CardPile.Owner owner, 
-					final CardPile.Visibility visibility, final CardPile.Visible visible, final int numVisible,
-					final CardPile.Placement placement, final CardPile.Orientation orientation,
-					final CardPile.Tiling tiling, final CardPile.Removal removal) {
-		this.name = name;
-		this.owner = owner;
-		this.visibility = visibility;
-		this.visible = visible;
-		this.numVisible = numVisible;
-		this.placement = placement;
-		this.orientation = orientation;
-		this.tiling = tiling;
-		this.removal = removal;
-		
+	public CardPile(final CardPileParameter parameters) {
+		this.parameters = parameters;
 		cards = new LinkedList<PlayingCard>();
 	}
 	
@@ -163,8 +73,8 @@ public class CardPile {
 	 * 
 	 * @return the name of this CardPile
 	 */
-	public String getName() {
-		return name;
+	public CardPileParameter getParameters() {
+		return parameters;
 	}
 	
 	/**
@@ -174,78 +84,6 @@ public class CardPile {
 	 */
 	public int getSize() {
 		return cards.size();
-	}
-	
-	/**
-	 * Returns the <tt>Owner</tt> of this <tt>CardPile</tt>.
-	 * 
-	 * @return the Owner of this CardPile
-	 */
-	public Owner getOwner() {
-		return owner;
-	}
-	
-	/**
-	 * Returns the <tt>Visibility</tt> of this <tt>CardPile</tt>.
-	 * 
-	 * @return the Visibility of this CardPile
-	 */
-	public Visibility getVisibility() {
-		return visibility;
-	}
-	
-	/**
-	 * Returns the <tt>Visible</tt> of this <tt>CardPile</tt>.
-	 * 
-	 * @return the Visible of this CardPile
-	 */
-	public Visible getVisible() {
-		return visible;
-	}
-	
-	/**
-	 * Returns the number of visible Cards in this <tt>CardPile</tt>.
-	 * 
-	 * @return the number of visible Cards in this CardPile
-	 */
-	public int getNumVisible() {
-		return numVisible;
-	}
-	
-	/**
-	 * Returns the <tt>Placement</tt> of this <tt>CardPile</tt>.
-	 * 
-	 * @return the Placement of this CardPile
-	 */
-	public Placement getPlacement() {
-		return placement;
-	}
-	
-	/**
-	 * Returns the <tt>Orientation</tt> of this <tt>CardPile</tt>.
-	 * 
-	 * @return the Orientation of this CardPile
-	 */
-	public Orientation getOrientation() {
-		return orientation;
-	}
-	
-	/**
-	 * Returns the <tt>Tiling</tt> of this <tt>CardPile</tt>.
-	 * 
-	 * @return the Tiling of this CardPile
-	 */
-	public Tiling getTiling() {
-		return tiling;
-	}
-	
-	/**
-	 * Returns the <tt>Removal</tt> of this <tt>CardPile</tt>.
-	 * 
-	 * @return the Removal of this CardPile
-	 */
-	public Removal getRemoval() {
-		return removal;
 	}
 	
 /*------------------------------------------------
@@ -285,23 +123,6 @@ public class CardPile {
 	}
 	
 	/**
-	 * Returns <tt>true</tt> if this <tt>CardPile</tt> contains a card with the specified value.
-	 * 
-	 * @param value	the value of the playing card to be searched for
-	 * @return true if this pile contains a card with the specified value
-	 */
-	public boolean contains(final int value) {
-		boolean isContained = false;
-		for (final PlayingCard c : cards) {
-			if (c.getValue() == value) {
-				isContained = true;
-				break;
-			}
-		}
-		return isContained;
-	}
-	
-	/**
 	 * Removes the specified <tt>PlayingCard</tt> from this <tt>CardPile</tt>.
 	 * Returns <tt>false</tt> if the specified card is not found.
 	 * 
@@ -310,24 +131,6 @@ public class CardPile {
 	 */
 	public boolean remove(final PlayingCard card) {
 		return ((LinkedList<PlayingCard>) cards).removeFirstOccurrence(card);
-	}
-	
-	/**
-	 * Removes and returns the first <tt>PlayingCard</tt> with the specified value from this <tt>CardPile</tt>.
-	 * Returns <tt>null</tt> if no such card is found.
-	 * 
-	 * @param value	the value of the playing card to be searched for
-	 * @return a PlayingCard with that value or null
-	 */
-	public PlayingCard remove(final int value) {
-		PlayingCard card = null;
-		for (final PlayingCard c : cards) {
-			if (c.getValue() == value) {
-				card = c;
-				break;
-			}
-		}
-		return card;
 	}
 	
 	/**
@@ -458,7 +261,6 @@ public class CardPile {
 /*------------------------------------------------
     Overridden Methods
  ------------------------------------------------*/	
-
 	/**
 	 * Return information about this <tt>CardPile</tt>.
 	 * 
@@ -466,15 +268,7 @@ public class CardPile {
 	 */
 	@Override  public String toString() {
 		final StringBuilder str = new StringBuilder();
-		str.append("CardPile: ").append(name).append(NEW_LINE)
-		   .append("Owner: ").append(owner).append(NEW_LINE)
-		   .append("Visibility: ").append(visibility).append(NEW_LINE)
-		   .append("Visible: ").append(visible).append(" (")
-		   .append(numVisible).append(')').append(NEW_LINE)
-		   .append("Placement: ").append(placement).append(NEW_LINE)
-		   .append("Orientation: ").append(orientation).append(NEW_LINE)
-		   .append("Tiling: ").append(tiling).append(NEW_LINE)
-		   .append("Removal: ").append(removal).append(NEW_LINE)
+		str.append(parameters.toString())
 		   .append("Top Card: ").append(cards.isEmpty() ? "NONE" : 
 			   		((LinkedList<PlayingCard>) cards).getLast().toString());
 		return str.toString();

@@ -4,7 +4,7 @@
 ######################################################
 
 # What is the name of the game described by this file?
-game template
+name template
 
 #################
 # cardpile - Descibe each individual cardpile used in the game
@@ -74,7 +74,7 @@ cardpile
 # shape - Specify the shape of the playing area
 #	sided - polygon shape changes with number of players (default is a square)
 #	circle - circle with a dynamic radius
-#	semi-cicle - half of a circle with a dynamic radius
+#	semicicle - half of a circle with a dynamic radius
 
 # dealer - specify whether or not a spot is reserved for a dealer
 #	<yes, no>

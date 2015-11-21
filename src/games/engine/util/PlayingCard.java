@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			PlayingCard.java
 * @author		Kurt E. Clothier
-* @date			November 12, 2015
+* @date			November 14, 2015
 *
 * @breif		Single playing card for card playing games
 *
@@ -16,135 +16,51 @@
 package games.engine.util;
 
 import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /******************************************************************//**
  * The PlayingCard Class
  * - An individual playing card used in a game
- * - Each card has a unique ID number
- * - Cards are quasi-immutable
+ * - Cards are Immutable
  * Limitations
  * - Cannot handle special attributes or card actions
- ********************************************************************/
-public class PlayingCard implements Comparable<PlayingCard>, Serializable, Cloneable{	
-	
+ *********************************************************************/
+public final class PlayingCard implements Comparable<PlayingCard>, Serializable, Cloneable {		
+		
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/
-	private static final long serialVersionUID = -4180762009957474007L;
-	private static final AtomicInteger UNIQUE_ID = new AtomicInteger(0);	// Thread safe!
-	private final int id;		// A unique ID for each Playing Card
-	private final String face;	// The name of the card, Ex: "2" or "King"
-	private final int value;	// The value of the card, Ex: "2" = 2, "Jack" = 10
-	private final String group;	// The group of the card, Ex: "Hearts" or "Clubs"
+	private static final long serialVersionUID = 3411088408983232224L;
+	private final PlayingCardFace face;		// The name of the card, Ex: "2" or "King"
+	private final PlayingCardGroup group;	// The group of the card, Ex: "Hearts" or "Clubs"
 	
 /*------------------------------------------------
  	Constructor(s)
  ------------------------------------------------*/
-	/** 
-	 * Construct a new <tt>PlayingCard</tt> with the given attributes.
-	 * 
-	 * @param face	the face (title, name, etc) of this card
-	 */
-	public PlayingCard(final String face) {
-		this(face, 0, null);
-	}
-	
-	/** 
-	 * Construct a new <tt>PlayingCard</tt> with the given attributes.
-	 * 
-	 * @param face	the face (title, name, etc) of this card
-	 * @param value the value of this card
-	 */
-	public PlayingCard(final String face, final int value) {
-		this(face, value, null);
-	}
-	
-	/** 
-	 * Construct a new <tt>PlayingCard</tt> with the given attributes.
-	 * 
-	 * @param face	the face (title, name, etc) of this card
-	 * @param value the value of this card
-	 * @param group the group of this card (suit, color, etc)
-	 */
-	public PlayingCard(final String face, final int value, final String group) {
-		this(face, value, group, UNIQUE_ID.getAndIncrement());
-	}
-	
 	/**
-	 * Instantiates a new playing card.
-	 *
-	 * @param face the face
-	 * @param value the value
-	 * @param group the group
-	 * @param id the id
-	 */
-	/* 
 	 * Construct a new <tt>PlayingCard</tt> with the given attributes.
 	 * 
-	 * @param face	the face (title, name, etc) of this card
-	 * @param value the value of this card
+	 * @param face the face (title, name, etc) of this card
 	 * @param group the group of this card (suit, color, etc)
+	 * @throws IllegalArgumentException if both parameters are null
 	 */
-	protected PlayingCard(final String face, final int value, final String group, final int id) {
+	PlayingCard(final PlayingCardFace face, final PlayingCardGroup group) throws IllegalArgumentException {
+		if (face == null && group == null ) {
+			throw new IllegalArgumentException("Both parameters cannot be null!");
+		}
 		this.face = face;
-		this.value = value;
 		this.group = group;
-		this.id = id;
-	}
-	
-	/**
-	 * Instantiates a new playing card.
-	 *
-	 * @param card the card
-	 */
-	/*
-	 * Construct a new <tt>PlayingCard</tt> by cloning the given <tt>PlayingCard</tt>.
-	 * 
-	 * @param PlayingCard	PlayingCard to be copied
-	 * @param newID			true if new card should have a unique ID number
-	 */
-	protected PlayingCard(final PlayingCard card) {
-		this(card.face, card.value, card.group, card.id);
 	}
 	
 /*------------------------------------------------
     Accessors
  ------------------------------------------------*/
 	/**
-	 * Returns the unique id on this <tt>PlayingCard</tt>.
-	 * 
-	 * @return the unique id on this card
-	 */
-	public final int getID() {
-		return id;
-	}
-	
-	/**
 	 * Returns the face on this <tt>PlayingCard</tt>.
 	 * 
 	 * @return the face on this card
 	 */
-	public final String getFace() {
+	public PlayingCardFace getFace() {
 		return face;
-	}
-
-	/**
-	 * Returns the numerical value of this <tt>PlayingCard</tt>.
-	 * 
-	 * @return the numerical value of this card
-	 */
-	public final int getValue() {
-		return value;
-	}
-	
-	/**
-	 * Returns the numerical value of this <tt>PlayingCard</tt>.
-	 * 
-	 * @return the numerical value of this card
-	 */
-	public final int getRank() {
-		return value;
 	}
 	
 	/**
@@ -152,69 +68,39 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable, Clone
 	 * 
 	 * @return the group of this card
 	 */
-	public final String getGroup() {
+	public PlayingCardGroup getGroup() {
 		return group;
 	}
 	
 /*------------------------------------------------
-    Utility Methods
+    Utilities
  ------------------------------------------------*/
 	/**
- * Compare this <tt>PlayingCard</tt> to that <tt>PlayingCard</tt> using their attributes.
- * Returns <tt>true</tt> if the specified card has the same face and group as this card.
- *
- * @param that the that
- * @return true if the specified card has the same face and group as this card.
- */
-	public boolean matches(final PlayingCard that) {
-		return 	this.face.equals(that.face) &&
-				this.matchesGroupWith(that);
-	}
-	
-	/**
-	 * Compare this <tt>PlayingCard</tt> to that <tt>PlayingCard</tt> using their attributes.
-	 * Returns <tt>true</tt> if the specified card has the same group as this card.
+	 * Returns <tt>true</tt> if this <tt>PlayingCard</tt> has the attributes of the specified card.   
 	 *
-	 * @param that the that
-	 * @return true if the specified card has the same group as this card.
+	 * @param card to test against this card
+	 * @return <tt>true</tt> if this card has the attributes of the specified
 	 */
-	public boolean matchesGroupWith(final PlayingCard that) {
-		return 	this.group.equals(that.group) ||
-				(this.group == null && that.group == null);
+	public boolean has(final PlayingCard that) {
+		return 	this.has(that.face, that.group);
 	}
 	
 	/**
-	 * Compare this <tt>PlayingCard</tt> to that <tt>PlayingCard</tt> using their attributes.
-	 * Returns <tt>true</tt> if the specified card has the same face as this card.
+	 * Returns <tt>true</tt> if this <tt>PlayingCard</tt> has the specified attributes.  
 	 *
-	 * @param that the that
-	 * @return true if the specified card has the same face as this card.
+	 * @param face face to test against this card
+	 * @param group group to test against this card
+	 * @return <tt>true</tt> if this card has the specified attributes
 	 */
-	public boolean matchesFaceWith(final PlayingCard that) {
-		return this.face.equals(that.group);
+	public boolean has(final PlayingCardFace face, final PlayingCardGroup group) {
+		return 	// Compare face attributes with null checks
+				(face == null && this.face == null ||
+				 face != null && face.equals(this.face)) &&
+				// Compare group attribute with null checks
+				(group == null && this.group == null ||
+				 group != null && group.equals(this.group));
 	}
 	
-	/**
-	 * Compare this <tt>PlayingCard</tt> to that <tt>PlayingCard</tt> using their values.
-	 * Returns <tt>true</tt> if the specified card has the same value as this card.
-	 *
-	 * @param that the that
-	 * @return true if the specified card has the same value as this card.
-	 */
-	public boolean matchesValueWith(final PlayingCard that) {
-		return this.value == that.value;
-	}
-	
-	/**
-	 * Returns a new <tt>PlayingCard</tt> by copying this <tt>PlayingCard</tt>.
-	 * New card will have a new ID number.
-	 * 
-	 * @return new card copy of this card, with new ID
-	 */
-	public final PlayingCard copy() {
-		return new PlayingCard(this.face, this.value, this.group);
-	}
-
 /*------------------------------------------------
     Overridden Methods
  ------------------------------------------------*/
@@ -224,26 +110,47 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable, Clone
 	 * 
 	 * @return new card clone of this card, with same ID
 	 */
-	@Override public final Object clone() throws CloneNotSupportedException {
+	@Override public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
 	
     /**
-     * Compare this <tt>PlayingCard</tt> to that <tt>PlayingCard</tt> using their values.
+     * Compare this <tt>PlayingCard</tt> to that <tt>PlayingCard</tt>, lexicographically.
+     * Ex: 3 of Clubs = 3 of clubs < 4 of clubs < 4 of Hearts < Two of Diamonds
      *
      * @param that the that
-     * @return        -1,0,1 if this <,==,> that
+     * @return N, where N = {-n,0,n if this <,==,> that}
      */
 	@Override public int compareTo(final PlayingCard that) {
-        if(this.value == that.getValue()) {
-        	return 0;
-        }
-        else if(this.value < that.getValue()) {
-        	return -1;
-        }
-        else {
-        	return 1;
-        }
+		int ret = 0;
+		if (that == null) {
+			ret = 1;
+		}
+		else if (this.face == null) {
+			if (that.face ==  null) {
+				ret = this.group.compareTo(that.group);
+			}
+			else {
+				ret = -1;
+			}
+		}
+		else if (this.face.equals(that.face)) {
+			if (this.group == null) {
+				if (that.group == null) {
+					ret = 0;
+				}
+				else {
+					ret = -1;
+				}
+			}
+			else {
+				ret = this.group.compareTo(that.group);
+			}
+		}
+		else {
+			ret = this.face.compareTo(that.face);
+		}
+		return ret;
 	}
 	
 	/**
@@ -251,25 +158,23 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable, Clone
 	 * Returns <tt>true</tt> if the given object is non-null and is this <tt>PlayingCard</tt>.
 	 * The copmareTo() method should be used for value comparisons.
 	 *
-	 * @param other   object to be compared for equality with this <tt>PlayingCard</tt>
-	 * @return        <tt>true</tt> if the specified object is equal to this <tt>PlayingCard</tt>
+	 * @param that object to be compared for equality with this <tt>PlayingCard</tt>
+	 * @return <tt>true</tt> if the specified object is equal to this <tt>PlayingCard</tt>
 	 */
-	@Override public boolean equals(final Object other) {
-		return 	other != null && 
-				this.getClass() == other.getClass() &&
-				this.id == ((PlayingCard)other).getID();
+	@Override public boolean equals(final Object that) {
+		return 	that != null && 
+				that.getClass() == this.getClass() &&
+				this.has((PlayingCard)that);
 	}
 	
 	/**
 	 * Returns the hash code associated with this <tt>PlayingCard</tt>.
 	 *
-	 * @return  the hashCode associated with this card
+	 * @return the hashCode associated with this card
 	 */
 	@Override public int hashCode() {
 		int hash = 17;
-		hash = hash * 31 + this.id;
 		hash = hash * 31 + this.face.hashCode();
-	    hash = hash * 31 + this.value;
 	    hash = hash * 31 + this.group.hashCode();
 		return hash;
 	}
@@ -277,16 +182,14 @@ public class PlayingCard implements Comparable<PlayingCard>, Serializable, Clone
 	/**
 	 * Returns string containing information about this <tt>PlayingCard</tt>.
 	 *
-	 * @return  string containing information about this card
+	 * @return string containing information about this card
 	 */
 	@Override public String toString() {
 		final StringBuilder str = new StringBuilder();
-		str.append("Playing Card: ").append(this.face);
-		if (this.group != null) {
-			str.append(" (").append(this.group).append(')');
-		}
-		str.append(" = ").append(this.value);
+		str.append("Playing Card: ").append(this.face)
+		   .append(" - ").append(this.group);
 		return str.toString();
 	}
 }
+
 

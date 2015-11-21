@@ -8,7 +8,7 @@
 ######################################################
 
 # name of this game, no whitespace (use '_' to represent spaces)
-game template
+name template
 
 # name of the deck used by this game, do not include file prefix or postfix
 deck template
@@ -46,8 +46,9 @@ direction-of-play <cw, ccw>
 #			player 1 pile 2; player 1 pile 2; player 2 pile 2; player 2 pile 2;
 
 # player-piles - specify the order of player piles, followed by number of cards to be dealt
-# 	[1, n] - positive integer, capped by size of deck
+# 	[0, n] - positive integer, capped by size of deck
 #	all - all remaining cards
+#	none - no cards
 # ex:
 # player-piles 
 #	hand 5

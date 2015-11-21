@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			CardPlayer.java
 * @author		Kurt E. Clothier
-* @date			November 11, 2015
+* @date			November 20, 2015
 *
 * @breif		Player in a card game
 *
@@ -16,34 +16,42 @@
 
 package games.engine.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /************************************************************************
  * The CardPlayer Class
  * - This class represents a player in a card game.
- * - Each player should be given a collection of Card Piles
+ * - Each player holds a collection of Card Piles
  ************************************************************************/
-public class CardPlayer extends AbstractPlayer{
+public class CardPlayer extends GamePlayer {
 	
-/** The piles. */
+	//private static final long serialVersionUID = -3701555831455653073L;
+	
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/
-	private Map<String, CardPile> piles;	// Card Piles owned by this player
+	private CardPileCollection piles;
 
 /*------------------------------------------------
  	Constructor(s)
  ------------------------------------------------*/
+	/**
+	 * Constructs a new <tt>CardPlayer</tt> with the specified attributes.
+	 *
+	 * @param player the game player use to create this card player
+	 * @param collection a collection of card piles owned by this player
+	 */
+	public CardPlayer(final GamePlayer player, final CardPileCollection collection) {
+		this(player.getName(), collection);
+	}
 	
 	/**
- * Constructs a new <tt>CardPlayer</tt> with the given name.
- *
- * @param name 		what to call this card player
- */
-	public CardPlayer(String name) {
+	 * Constructs a new <tt>CardPlayer</tt> with the specified attributes.
+	 *
+	 * @param name what to call this card player
+	 * @param collection a collection of card piles owned by this player
+	 */
+	public CardPlayer(final String name, final CardPileCollection collection) {
 		super(name);
-		piles = null;
+		piles = collection.copy();
 	}
 	
 /*------------------------------------------------
@@ -51,27 +59,15 @@ public class CardPlayer extends AbstractPlayer{
  ------------------------------------------------*/
 	
 	/**
-	 * Returns the <tt>CardPile</tt> with the specified name.
+	 * Returns the <tt>CardPileCollecion</tt> held by this player.
 	 * 
-	 * @param name the <tt>CardPile</tt> to return
-	 * @return the <tt>CardPile</tt> with the specified name
+	 * @return the <tt>CardPileCollecion</tt> held by this player
 	 */
-	public CardPile getPile(String name) {
-		return piles.get(name);
+	public CardPileCollection getPlayerPiles() {
+		return piles;
 	}
 	
-	/**
-	 * Gives the created <tt>CardPiles</tt> to this player.
-	 * 
-	 * @param piles array of CardPiles to give to this player
-	 */
-	public void addPiles (CardPile[] piles) {
-		if (this.piles == null) {
-			this.piles = new HashMap<String, CardPile>((int)(piles.length/0.75 +1));
-		}
-		for (CardPile p : piles) {
-			this.piles.put(p.getName(), p);
-		}
+	@Override public String toString() {
+		return super.toString() + "\n" + piles.toString();
 	}
-
 }

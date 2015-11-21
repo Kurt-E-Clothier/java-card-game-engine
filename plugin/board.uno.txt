@@ -2,7 +2,7 @@
 # Uno Card Game Board Configuration File
 # Card pile names must match those in rules!
 ######################################################
-game uno
+name uno
 
 # stock card pile is the left over cards after hands are dealt
 cardpile
