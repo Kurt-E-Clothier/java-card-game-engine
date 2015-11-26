@@ -1,7 +1,5 @@
-package games.engine.gui;
+/*package games.engine.gui;*/
 
-import java.awt.Color;
-import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
@@ -99,6 +97,34 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
         pointer[3] = rotatePointer(pointer[0]);
         pointer[2] = rotatePointer(pointer[3]);
         pointer[1] = rotatePointer(pointer[2]);
+        
+        offscreen = new BufferedImage(450, 550, BufferedImage.TYPE_3BYTE_BGR);
+        g = offscreen.getGraphics();
+        g.drawImage(title, -40, 120, this);
+        g.setColor(Color.white);
+        g.drawLine(0, 450, 450, 450);
+
+        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+         if(screenSize.width < 1024){
+            offscreen2 = new BufferedImage(338, 413, BufferedImage.TYPE_3BYTE_BGR);
+
+            g2 = offscreen2.getGraphics();
+            g2d = (Graphics2D) g2;
+            AffineTransform at = new AffineTransform();
+            at.scale(0.75, 0.75);
+            g2d.transform(at);
+            g2d.drawImage(offscreen, 0, 0, null);
+            imageI = new ImageIcon(offscreen2);
+        }else
+            imageI = new ImageIcon(offscreen);
+
+        image = new JLabel(imageI);
+
+        addMouseMotionListener(this);
+        addMouseListener(this);
+        requestFocus();
+
     }
 
     public static void main(String[] args) {
