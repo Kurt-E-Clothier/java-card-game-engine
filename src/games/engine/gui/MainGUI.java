@@ -1,4 +1,4 @@
-/*package games.engine.gui;*/
+package games.engine.gui;
 
 import java.awt.event.*;
 import javax.swing.*;
