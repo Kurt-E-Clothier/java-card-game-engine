@@ -200,6 +200,54 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
 		            "About the Game");
 		    menuItem.addActionListener( this );
 		    menu.add(menuItem);
+		    
+		    addWindowListener(this);
+
+		     msg = new JTextArea("Welcome to the card game\n", 4, 20);
+		     msg.setLineWrap(true);
+		     msg.setEditable(false);
+		     msg.setDisabledTextColor(Color.black);
+
+		    input = new JTextField();
+		    input.addActionListener(this);
+
+		    scrollPane = new JScrollPane(msg, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+
+		     panel = new JPanel();
+		     GridBagLayout gridbag = new GridBagLayout();
+		     GridBagConstraints c = new GridBagConstraints();
+		     panel.setLayout(gridbag);
+		     c.anchor = GridBagConstraints.WEST;
+		     c.fill = GridBagConstraints.BOTH; 
+		     panel.setBackground(Color.white);
+		     getContentPane().add(panel);
+
+		     panel.add(menuBar, c);
+		     c.gridy = 1;
+		     panel.add(image, c);
+		     c.gridy = 2;
+		     panel.add(scrollPane, c);
+		     c.gridy = 3;
+		     panel.add(input, c);
+
+		    addMsg("Detected Screen Size: " + screenSize.width  + "x" + screenSize.height);
+		    if(screenSize.width < 1024)
+		        addMsg("For optimal graphics use 1024x768 resolution");
+
+		    score = new Score(this);
+
+		   }
+    public void actionPerformed(ActionEvent event){
+        String label = event.getActionCommand();
+
+        if (label.equals("Quit")){
+
+            System.exit(0);      
+        }
+
+
+
 
     }
 
