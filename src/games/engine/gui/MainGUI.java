@@ -124,6 +124,82 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
         addMouseMotionListener(this);
         addMouseListener(this);
         requestFocus();
+        
+        menuBar = new JMenuBar();
+
+        //Build the first menu.
+        menu = new JMenu("File");
+        menu.setMnemonic(KeyEvent.VK_F);
+        menu.getAccessibleContext().setAccessibleDescription(
+            "Game Options");
+        menuBar.add(menu);
+
+        //File group of JMenuItems
+        menuItem = new JMenuItem("2 Player",
+                             KeyEvent.VK_P);
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Start Single Player Game");
+        menuItem.addActionListener( this );
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Scoreboard",
+                KeyEvent.VK_B);
+		menuItem.getAccessibleContext().setAccessibleDescription(
+		   "Veiw Scoreboard");
+		menuItem.addActionListener( this );
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Quit",
+		                KeyEvent.VK_Q);
+		menuItem.getAccessibleContext().setAccessibleDescription(
+		   "Quit Game");
+		menuItem.addActionListener( this );
+		menu.add(menuItem);
+
+		menu = new JMenu("Options");
+		menu.getAccessibleContext().setAccessibleDescription(
+		"Game Options");
+		menuBar.add(menu);
+		
+		menuItem = new JMenuItem("Redeal",
+		                KeyEvent.VK_R);
+		menuItem.getAccessibleContext().setAccessibleDescription(
+		   "Redeal the deck");
+		menuItem.addActionListener( this );
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Start Game",
+		                KeyEvent.VK_S);
+		menuItem.getAccessibleContext().setAccessibleDescription(
+		   "Start game now");
+		menuItem.addActionListener( this );
+		menu.add(menuItem);
+
+		 menu = new JMenu("About");
+		    menu.getAccessibleContext().setAccessibleDescription(
+		        "About the Game");
+		    menuBar.add(menu);
+
+		    menuItem = new JMenuItem("Rules",
+		                         KeyEvent.VK_R);
+		    menuItem.getAccessibleContext().setAccessibleDescription(
+		            "How to play");
+		    menuItem.addActionListener( this );
+		    menu.add(menuItem);
+
+		    menuItem = new JMenuItem("Home Page",
+		                         KeyEvent.VK_H);
+		    menuItem.getAccessibleContext().setAccessibleDescription(
+		            "View Home Page");
+		    menuItem.addActionListener( this );
+		    menu.add(menuItem);
+
+		    menuItem = new JMenuItem("About",
+		                         KeyEvent.VK_A);
+		    menuItem.getAccessibleContext().setAccessibleDescription(
+		            "About the Game");
+		    menuItem.addActionListener( this );
+		    menu.add(menuItem);
 
     }
 
