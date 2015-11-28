@@ -6,6 +6,10 @@ import java.awt.*;
 import java.awt.image.*;
 import java.net.*;
 import javax.swing.JComponent.*;
+
+import games.engine.util.CardDealer;
+import games.engine.util.CardPlayer;
+
 import java.awt.geom.*;
 import java.io.*;
 
@@ -50,14 +54,13 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
 
     boolean myTurn = false; 
     
-    Message message = null;
-    Dealer dealer = null;
-    Player player = null;
-    Score score;
+    CardDealer dealer = null;
+    CardPlayer player = null;
+    //Score score;
     
     String playersName = "unknown";
 
-    Hand hand;
+    //Hand hand;
 
     Point pointplayer1[] = new Point[3];
     Point pointplayer2[] = new Point[3];
@@ -235,7 +238,7 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
 		    if(screenSize.width < 1024)
 		        addMsg("For optimal graphics use 1024x768 resolution");
 
-		    score = new Score(this);
+		    //score = new Score(this);
 
 		   }
     public void actionPerformed(ActionEvent event){
@@ -246,10 +249,152 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
             System.exit(0);      
         }
 
+        else if(label.equals("2 Player")){
+            addMsg("Two Player Option");
+                if(dealer != null || player != null){
+                addMsg("You already have an ongoing game");
+                }else{
+               // CardDealer dealerD = new CardDealer(this);
+                //dealerD.show();
+               // playersName = dealerD.getName();
+                if(playersName != "cancel#*#")
+                {
+                   // if(dealerD.swap())
+                        addMsg("Card Swap at start of game Selected");
+                   //more to add for game playing
+                }
+                }
+            }
+        
+        else if(label.equals("Redeal")){
+            if(dealer != null);
+                //dealer.redeal();
+            }
+
+            else if(label.equals("Start Game")){
+            if(dealer != null);
+               // dealer.start();
+            }
+            
+            else if(label.equals("Scoreboard")){
+           // score.display();
+            }
+
+            else if(label.equals("About")){
+            Info info = new Info(this);
+            info.show();
+            }
+
+            else if(label.equals("Rules")){
+            try{
+                Runtime.getRuntime().exec("cmd.exe /c start iexplore https://cardgames.io/idiot/#rules");
+            }catch(Exception e){ addMsg("Error launching Internet Explorer.  Please visit https://cardgames.io/idiot/#rules");}
+            }
+
+            else if(label.equals("Home Page")){
+            try{
+                Runtime.getRuntime().exec("cmd.exe /c start iexplore https://cardgames.io/idiot/");
+            }catch(Exception e){ 
+            	addMsg("Error launching Internet Explorer.  Please visit https://cardgames.io/idiot/");
+            	}
+            }
+            }
+        
+        private Image rotatePointer(Image img)
+        {
+
+        Image rot = null;
+
+        int buffer[] = new int[15 * 15];
+        int rotate[] = new int[15 * 15];
 
 
+          PixelGrabber grabber =
+            new PixelGrabber(img, 0, 0, 15, 15, buffer, 0, 15);
+            try {
+            grabber.grabPixels();
+              }
+          catch(InterruptedException e) {
+             addMsg("Rotate image error " + e);
+             }
+          for(int y = 0; y < 15; y++) {
+            for(int x = 0; x < 15; x++) {
+              rotate[((15-x-1)*15)+y] = buffer[(y*15)+x];
+              }
+            }
+          rot = createImage(new MemoryImageSource(15, 15, rotate, 0, 15));
 
-    }
+        return rot;
+        }
+        
+        public void addMsg(String message)
+        {
+        if(message != null)
+        msg.append(message + "\n");
+        try { 
+        Rectangle current = msg.getVisibleRect();
+        int scrollunitinc = msg.getScrollableUnitIncrement(current, SwingConstants.VERTICAL, 1);
+        current.setRect(current.getX(), (msg.getLineCount() + 1) * scrollunitinc , current.getWidth(), current.getHeight());
+        msg.scrollRectToVisible(current);
+        } catch(Exception ex) {
+        System.out.println("\n Error scrolling to end " + ex);
+        }
+
+        }
+        
+        public void mousePressed( MouseEvent me) {
+            if(myTurn){
+              //  int selection = hand.mouseClick(mouseX, mouseY);
+               // if(dealer != null && selection != -1)
+                 //   dealer.cardSelection(selection);
+                //if(player != null && selection != -1)
+                  //  player.cardSelection(selection);   
+            }
+            }
+
+            public void setmyTurn(boolean myTurn)
+            {
+            this.myTurn = myTurn;
+            }
+
+            public void scalepic()
+            {
+               g2.drawImage(offscreen, 0, 0, null);
+            }
+
+            public boolean smallscreen()
+            {
+            if(screenSize.width < 1024)
+                return true;
+            return false;
+            }
+
+            public void repaint()
+            {
+            //if(screenSize.width < 1024){
+               //offscreen2 = offscreen.getScaledInstance(338, 413, Image.SCALE_FAST);
+               //imageI.setImage(offscreen2);
+            //}
+                panel.repaint();
+                //panel.update();
+            }
+
+            public void mouseMoved(MouseEvent me) {
+                //ajusting so mouse points are over image
+                mouseX = me.getX() - 5;
+                mouseY = me.getY() - 45;
+                if(screenSize.width < 1024){//scaling mouse movement if screen to big
+                    mouseX = mouseX * 100/75;
+                    mouseY = mouseY * 100/75;
+                }
+                //addMsg("X: " + mouseX + " Y: " + mouseY);
+            }
+
+            public void mouseDragged(MouseEvent e) {}
+            public void mouseEntered( MouseEvent me ) {}
+            public void mouseExited( MouseEvent me) {}
+            public void mouseClicked( MouseEvent me) {}
+            public void mouseReleased( MouseEvent me){} 
 
     public static void main(String[] args) {
         try {
@@ -263,4 +408,27 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
             System.out.println("Game Error: " + e);
         }
     }
+    
+    public void windowClosing(WindowEvent e) {
+        System.exit(0);  
+   }
+
+public void windowClosed(WindowEvent e) {
+}
+
+public void windowOpened(WindowEvent e) {
+}
+
+public void windowIconified(WindowEvent e) {
+}
+
+public void windowDeiconified(WindowEvent e) {
+}
+
+public void windowActivated(WindowEvent e) {
+}
+
+public void windowDeactivated(WindowEvent e) {
+}
+
 }
