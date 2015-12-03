@@ -76,13 +76,13 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
 
         MediaTracker tracker = new MediaTracker(this);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
-
-        cardspic = toolkit.getImage(this.getClass().getResource("Images/cards.gif"));
-        back = toolkit.getImage(this.getClass().getResource("Images/back.gif"));
-        backSW = toolkit.getImage(this.getClass().getResource("Images/backSW.gif"));
-        title = toolkit.getImage(this.getClass().getResource("Images/Title.jpg"));
-        pointer[0] = toolkit.getImage(this.getClass().getResource("Images/pointer.gif"));
-        burntPic = toolkit.getImage(this.getClass().getResource("Images/burnt.jpg"));
+        //might need to change the image path depending on build
+        cardspic = toolkit.getImage(this.getClass().getResource("games/engine/images/cards.gif"));
+        back = toolkit.getImage(this.getClass().getResource("games/engine/images/back.gif"));
+        backSW = toolkit.getImage(this.getClass().getResource("games/engine/images/backSW.gif"));
+        title = toolkit.getImage(this.getClass().getResource("games/engine/images/Title.jpg"));
+        pointer[0] = toolkit.getImage(this.getClass().getResource("games/engine/images/pointer.gif"));
+        burntPic = toolkit.getImage(this.getClass().getResource("games/engine/images/burnt.jpg"));
 
         tracker.addImage(cardspic, 1);
         tracker.addImage(back, 1);

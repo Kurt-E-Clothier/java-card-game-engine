@@ -1,43 +1,53 @@
- import javax.swing.*;
-    import java.io.*;
-    /* Author : Group 5
-     * Test file for GUI to read filenames associated with rules file
-     */
-    public class FileName extends JFrame{
-        JPanel pnl=new JPanel();
-        public static void main (String[]args) {
-            FileName print=new FileName();
-            }
-        JList list;
-        
-
-        @SuppressWarnings("unchecked")
-        public FileName() {
-            super("Swing Window");
-            setSize(250,300);
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            setVisible(true);
-            add(pnl);
-
-            String path="/";
-            File folder=new File(path);
-            File[]listOfFiles = new File(System.getProperty("user.dir")+"/plugin").listFiles(new TextFileFilter());
-            list=new JList(listOfFiles);
-            list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list.setLayoutOrientation(JList.VERTICAL);
-            pnl.add(list);
-            pnl.revalidate();
-            }
-    }
-    
+package games.engine.gui;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+ /*
+  *Likely be the main class to start game
+  *To do:
+  *	Add list of available games using plugin methods
+  *	Resize screen when game starts 
+  * @author group 5
+  *
+  */
+public class FileName
+{
+  static JFrame frame;
  
+  public static void main(String[] args)
+  {
+    SwingUtilities.invokeLater(new Runnable()
+    {
+      public void run()
+      {
+        displayJFrame();
+      }
+    });
+  }
 
-    class TextFileFilter implements FileFilter {
-        public boolean accept(File file) {
-            String name=file.getName();
-            return name.length()<28&&name.contains("rule");
-            }
-        }
-    
-    
-    
+  
+  static void displayJFrame()
+  {
+    frame = new JFrame("Available Games");
+ 
+    JButton showDialogButton = new JButton("Game one");
+     
+    showDialogButton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+    	  MainGUI gui=new MainGUI();
+    	  gui.show();
+    	  gui.setVisible(true);
+       
+      }
+    });
+ 
+    frame.getContentPane().setLayout(new FlowLayout());
+    frame.add(showDialogButton);
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.pack();
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
+  }
+}
