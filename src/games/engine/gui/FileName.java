@@ -36,10 +36,13 @@ public class FileName
     {
       public void actionPerformed(ActionEvent e)
       {
-    	  MainGUI gui=new MainGUI();
-    	  gui.show();
-    	  gui.setVisible(true);
-       
+    	  MainGUI game = new MainGUI();
+          game.setTitle("Card Game");
+          game.setResizable(false);
+
+          game.pack();
+          game.setVisible(true);
+    	     
       }
     });
  
