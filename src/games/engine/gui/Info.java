@@ -1,3 +1,5 @@
+package games.engine.gui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

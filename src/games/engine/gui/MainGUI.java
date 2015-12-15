@@ -13,6 +13,8 @@ import games.engine.util.CardPlayer;
 import java.awt.geom.*;
 import java.io.*;
 
+import games.engine.gui.*;
+
 /*-------------------------------
 Program for card game GUI (Partial)
 Author: Group 5
