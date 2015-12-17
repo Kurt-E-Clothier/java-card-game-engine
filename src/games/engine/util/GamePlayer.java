@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			GamePlayer.java
 * @author		Kurt E. Clothier
-* @date			November 20, 2015
+* @date			December 7, 2015
 *
 * @breif		Player in a game
 *
@@ -16,21 +16,24 @@
 
 package games.engine.util;
 
-import java.io.Serializable;
+import games.Strings;
+import games.engine.Phase;
 
 /************************************************************************
  * The GamePlayer Class
  * - This class represents a player in a game.
  ************************************************************************/
-public class GamePlayer implements Serializable {	
+public class GamePlayer {	
 	
-	private static final long serialVersionUID = -4248346240701007222L;
 	
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/
 	private final String name;
-	private boolean isMyTurn;
+	private Phase phase;
+	private Phase startingPhase;
+	private boolean hasWon;
+	private boolean hasLost;
 	
 /*------------------------------------------------
  	Constructor(s)
@@ -42,41 +45,116 @@ public class GamePlayer implements Serializable {
 	 */
 	public GamePlayer(final String name) {
 		this.name = name;
-		this.isMyTurn = false;
+		this.phase = null;
+		this.startingPhase = null;
+		this.hasLost = false;
+		this.hasWon = true;
 	}
 	
 /*------------------------------------------------
     Accessors and Mutators
  ------------------------------------------------*/
 	/**
-	 * Returns the name of this player.
+	 * Reset this <tt>GamePlayer</tt> to the default state.
+	 */
+	public void reset() {
+		this.phase = startingPhase;
+		this.hasLost = false;
+		this.hasWon = false;
+	}
+	
+	/**
+	 * Returns the name of this <tt>GamePlayer</tt>.
 	 * 
-	 * @return the name of this player
+	 * @return the name of this <tt>GamePlayer</tt>
 	 */
 	public String getName() {
 		return name;
 	}
 	
 	/**
-	 * Returns <tt>True</tt> if it is this players turn.
+	 * Returns the <tt>Phase</tt> this <tt>GamePlayer</tt> is in.
 	 * 
-	 * @return true if it is this players turn
+	 * @return the <tt>Phase</tt> this <tt>GamePlayer</tt> is in
 	 */
-	public boolean isPlayersTurn() {
-		return isMyTurn;
+	public Phase getPhase() {
+		return phase;
 	}
 	
 	/**
-	 * Specify if it is this player's turn.
+	 * Sets the <tt>Phase</tt> this <tt>GamePlayer</tt> is in.
 	 * 
-	 * @param bool <tt>True</tt> if it is this player's turn
+	 * @param phase the <tt>Phase</tt> this <tt>GamePlayer</tt> should be in
 	 */
-	protected void setTurnAs(final boolean bool) {
-		this.isMyTurn = bool;
+	public void setPhase(final Phase phase) {
+		this.phase = phase;
 	}
 	
-	@Override public String toString() {
-		return name;
+	/**
+	 * Returns the starting <tt>Phase</tt> this <tt>GamePlayer</tt> is in.
+	 * 
+	 * @return the <tt>Phase</tt> this <tt>GamePlayer</tt> is in
+	 */
+	public Phase getStartingPhase() {
+		return startingPhase;
 	}
-
+	
+	/**
+	 * Sets the starting <tt>Phase</tt> this <tt>GamePlayer</tt> is in.
+	 * 
+	 * @param phase the <tt>Phase</tt> this <tt>GamePlayer</tt> should be in
+	 */
+	public void setStartingPhase(final Phase phase) {
+		this.startingPhase = phase;
+	}
+	
+	/**
+	 * Returns <tt>true</tt> if this <tt>GamePlayer</tt> has won.
+	 * 
+	 * @return <tt>true</tt> if this <tt>GamePlayer</tt> has won
+	 */
+	public boolean hasWon() {
+		return hasWon;
+	}
+	
+	/**
+	 * Returns <tt>true</tt> if this <tt>GamePlayer</tt> has lost.
+	 * 
+	 * @return <tt>true</tt> if this <tt>GamePlayer</tt> has lost
+	 */
+	public boolean hasLost() {
+		return hasLost;
+	}
+	
+	/**
+	 * Set this <tt>GamePlayer</tt> as the winner.
+	 */
+	public void wins() {
+		hasWon = true;
+	}
+	
+	/**
+	 * Set this <tt>GamePlayer</tt> as a loser.
+	 * Note, this can also be used if a player is removed from the game, but the game continues.
+	 */
+	public void loses() {
+		hasLost = true;
+	}
+	
+/*------------------------------------------------
+	Overridden Methods
+ ------------------------------------------------*/
+	/**
+	 * Returns information about this <tt>GamePlayer</tt>.
+	 *
+	 * @return information about this <tt>GamePlayer</tt>
+ 	 */
+	@Override public String toString() {
+		final StringBuilder str = new StringBuilder();
+		str.append("Player: ").append(name).append(Strings.NEW_LINE.toString());
+		if (phase != null) {
+			str.append("In game phase: ").append(phase.getName()).append(Strings.NEW_LINE.toString());
+		}
+		return str.toString();
+	}
 }

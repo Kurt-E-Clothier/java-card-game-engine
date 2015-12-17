@@ -1,0 +1,196 @@
+######################################################
+# Uno Game Rules Configuration File
+#
+# Comments start with the <#> symbol and terminate at the EOL
+# Keywords should be on their own line, followed by whitespace and the associated value(s)
+# Whitespace is ignored for comma separated values
+# Numerical representations begin with 0
+######################################################
+
+name uno
+
+players 2-10
+
+deck uno
+
+#################################
+# Playing Card Ranking
+#	- can be done for faces, groups, or both
+#	- be sure to include ALL faces or groups to avoid runtime exceptions
+# Format Option 1: (use for simple ranking)
+# ranking <face, group> <lowest ranked face>,<face>,<face>,<highest ranked face>
+# Format Option 2: (use when different cards can be ranked the same thing)
+# ranking <face, group>
+#	face <numeric value>
+#	...
+# end-ranking
+#################################
+ranking group red,yellow,green,blue,wild
+ranking face
+	0	1
+	1	1
+	2	1
+	3	1
+	4	1
+	5	1
+	6	1
+	7	1
+	8	1
+	9	1
+	skip	1
+	draw_two	1
+	reverse	1
+	wild	1
+	wild_draw_four	1
+end-ranking
+
+#################################
+# Playing Card Alias
+# Format: 
+# alias <unique-name-without-spaces> <card face> <(optional) card group>
+#################################
+alias skip skip
+alias draw_two draw_two
+alias reverse reverse
+alias wild wild
+alias wild_draw_four wild_draw_four
+
+board uno
+
+direction-of-play cw
+
+start-phase 1
+
+#################################
+# Describe the dealing
+#################################
+deal
+	shuffle yes
+	direction ccw
+	collate yes
+	player-piles
+		hand 7
+	common-piles
+		discard 1
+		stock all
+end-deal
+
+#################################
+# Engine Components
+# Format: 
+# <action, condition> <unique-name-without-spaces>
+#	<operation> <variables> <...>
+#	<(Optional) String description>
+#
+# Defining a CardPile:
+#	owner.name
+#
+# Defining a PlayingCard:
+#	definedCardpile.<top, bottom, random, top-n, bottom+n>
+#	where +-n is up/down n cards from the bottom/top
+#################################
+
+#################################
+# Define all conditions which govern other actions
+#	- append condition with "or" or "and" to chain statments
+#	- prefix condition with "not" to invert the statement
+#	- do not use parenthesis or mix and/or - create supporting conditions
+#	- statements must be a valid engine operation or another condition
+#	- define condition before using it in another condition
+#	- use "end-condition" after the final condition
+#	- use parameters for embedded operations
+#################################
+
+condition is-skip
+	match-rank common.discard.top skip
+	
+condition is-draw-two
+	match-rank common.discard.top draw_two
+	
+condition is-reverse
+	match-rank playing-card reverse
+	
+condition is-wild
+	match-rank playing-card wild
+	
+condition is-wild-draw-4
+	match-rank playing-card wild_draw_four
+	
+condition is-wild-card
+	is-wild OR
+	is-wild-draw-4
+
+condition is-special-card
+	is-skip OR
+	is-draw-two OR
+	is-reverse OR
+	is-wild-card
+
+end-condition	
+
+#################################
+# List all possible game actions
+#	- actions can be manually performed by a player
+#	- actions can be automatically performed by the engine
+#	- use "end-action" after the final action
+#################################
+action go-to-2
+	goto 2
+	Go to phase 2
+	
+action go-to-1
+	goto 1
+	Go to phase 1
+	
+end-action
+	
+#################################
+# List all controlled actions
+# check a previously defined condition, then do a previously defined action
+#	- use "not" to invert the condition
+#	- use "repeat" to repeat check and action, indefinitely, or a number of times
+# Format: 
+# controlled-action <unique-name-without-spaces>
+#	(optional) not <condition-name> <if true action-name> <if false action-name>
+#	(optional)repeat (optiona)<whole number times to repeat>
+# controlled-action ...
+# controlled-action ...
+# end-controlled-action
+#################################
+controlled-action try-to-go-to-2
+	is-skip go-to-2
+	
+controlled-action try-to-go-to-1
+	is-draw-two go-to-1
+	
+end-controlled-action
+
+#################################
+# Define game phases... 
+# Need to include some action performing "goto" to go to a different phase, if applicable
+# Need to include some action performing "end-turn" to end the player's turn
+#	^ - otherwise, phase will repeat forever with same player
+# Format:
+#	phase <unique-name-without-spaces>
+#		do <name of action/controlled-action to do at start of phase (in order)> (optional repeat)
+#		do ...
+#		allow <name of action/controlled-action that a player can perform>
+#			# These response actions are performed even if the pre-condition for a controlled-action is not met
+#			# All necessary action parameters must be predfined, as none will be passed!
+#			do <name of action/controlled-action to perform in response to this player action>
+#			do ...
+#		allow ...
+#		<name of predefined condition that must be true to allow this action> allow ...
+#		end-allow	# to separate finishing actions from response actions
+#		do <name of action to do AFTER player makes a move (in order)>
+#		do ...
+#	end-phase
+#################################
+
+phase 1
+	allow try-to-go-to-2
+end-phase
+
+phase 2
+	allow try-to-go-to-1
+end-phase

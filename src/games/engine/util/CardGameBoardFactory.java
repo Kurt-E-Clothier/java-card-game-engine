@@ -45,59 +45,54 @@ public enum CardGameBoardFactory {
 	
 	/**
 	 * Create and return a <tt>CardGameBoard</tt> using the specified <tt>Plugin</tt>.
-	 * If a rules plugin is passed, a deck plugin will be created 
-	 * by parsing the rules for the "board" keyword.
 	 * 
-	 * @param rules Rules Plugin used to create this card gameboard
-	 * @return new CardGameBoard
+	 * @param pluign Board Plugin used to create this card gameboard
+	 * @return CardGameBoard created using the specified parameters 
 	 * @throws PluginException for invalid file, keywords, or parameters
 	 */
-	public synchronized CardGameBoard createCardGameBoard(final Plugin rulesPlugin) throws PluginException {
+	public synchronized CardGameBoard createCardGameBoard(final Plugin plugin, final Deck deck) throws PluginException {
 		// Create Plugins
-		rulesPlugin.checkType(Plugin.Type.RULES);
-		final Plugin boardPlugin = new Plugin(Plugin.Type.BOARD, rulesPlugin.checkParamsFor(PluginKeyword.BOARD));
-		final Deck deck = DeckFactory.INSTANCE.createDeck(rulesPlugin);
-		boardPlugin.checkName();
+		plugin.checkType(Plugin.Type.BOARD);
 		// Mandatory attributes
 		final CardPileFactory factory = CardPileFactory.getInstance();
-		final String name = boardPlugin.getFilename().getConvertedName();
-		final Plugin[] pilePlugins = factory.createPlugins(boardPlugin);
+		final String name = plugin.getFilename().getConvertedName();
+		final Plugin[] pilePlugins = factory.createPlugins(plugin);
 		final CardPileCollection commonPiles = factory.createCardPileCollection(CardPileParameter.Owner.COMMON, pilePlugins);
-		final CardGameBoardLayout layout = this.createCardGameBoardLayout(boardPlugin);
+		final CardGameBoardLayout layout = this.createCardGameBoardLayout(plugin);
 		return new CardGameBoard(name, deck, commonPiles, layout);
 	}
 	
 	/**
 	 * Create and return a <tt>CardGameBoardLayout using the specifed <tt>Plugin</tt>.
 	 * 
-	 * @param board Plugin used to create this card game board layout
+	 * @param plugin Plugin used to create this card game board layout
 	 * @return card game board layout
 	 * @throws PluginException for invalid file, keywords, or parameters
 	 */
-	public synchronized CardGameBoardLayout createCardGameBoardLayout(final Plugin board) throws PluginException {
-		board.checkType(Plugin.Type.BOARD);
+	public synchronized CardGameBoardLayout createCardGameBoardLayout(final Plugin plugin) throws PluginException {
+		plugin.checkType(Plugin.Type.BOARD);
 		
 		// Mandatory Parameters
 		final CardGameBoardLayout.Shape shape = 
-				PluginKeyword.SHAPE.checkBoundedParams(board, CardGameBoardLayout.Shape.class);
+				PluginKeyword.SHAPE.checkBoundedParams(plugin, CardGameBoardLayout.Shape.class);
 		final CardGameBoardLayout.Player_Layout pLayout = 
-				PluginKeyword.PLAYER_LAYOUT.checkBoundedParams(board, CardGameBoardLayout.Player_Layout.class);
+				PluginKeyword.PLAYER_LAYOUT.checkBoundedParams(plugin, CardGameBoardLayout.Player_Layout.class);
 		
 		// Optional dealer
-		boolean dealerPresent = PluginKeyword.DEALER.getBooleanParams(board);
+		boolean dealerPresent = PluginKeyword.DEALER.getBooleanParams(plugin);
 		
 		// Check for pile layouts
-		final int commonIndex = board.getIndexOf(PluginKeyword.COMMON_PILES);
-		final int playerIndex = board.getIndexOf(PluginKeyword.PLAYER_PILES);
+		final int commonIndex = plugin.getIndexOf(PluginKeyword.COMMON_PILES);
+		final int playerIndex = plugin.getIndexOf(PluginKeyword.PLAYER_PILES);
 		// Have to have at least one or the other
 		if (commonIndex < 0 && playerIndex < 0) {
-			throw PluginException.create(PluginException.Type.MISSING_KEYWORD, board, 
+			throw PluginException.create(PluginException.Type.MISSING_KEYWORD, plugin, 
 					PluginKeyword.COMMON_PILES + "\" and \"" + PluginKeyword.PLAYER_PILES);
 		}
 		final CardPileLayout commonLayout = commonIndex < 0 ? new CardPileLayout(null) :
-														CardPileFactory.INSTANCE.createCardPileLayout(CardPileParameter.Owner.COMMON, board);
+														CardPileFactory.INSTANCE.createCardPileLayout(CardPileParameter.Owner.COMMON, plugin);
 		final CardPileLayout playerLayout = playerIndex < 0 ? new CardPileLayout(null) :
-														CardPileFactory.INSTANCE.createCardPileLayout(CardPileParameter.Owner.PLAYER, board);
+														CardPileFactory.INSTANCE.createCardPileLayout(CardPileParameter.Owner.PLAYER, plugin);
 		return new CardGameBoardLayout(shape, pLayout, dealerPresent, commonLayout, playerLayout);
 	}
 }

@@ -16,7 +16,6 @@
 
 package games.engine.util;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,12 +32,11 @@ import games.engine.util.PlayingCard;
  * Limitations
  * - can't handle special card abilities (for games like Magic & Yugioh)
  ********************************************************************/
-public class Deck implements Serializable {
-	
+public class Deck {
+		
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/
-	//private static final long serialVersionUID = 4831242385432681020L;
 	private final String name;					// Name of the deck
 	private final String grouping;				// Deck grouping (categories)
 	private final PlayingCard[] cards;			// Set of cards for this deck	
@@ -64,6 +62,13 @@ public class Deck implements Serializable {
 /*------------------------------------------------
     Accessors
  ------------------------------------------------*/
+	/**
+	 * Reset this <tt>Deck</tt> to the default state (no cards dealt).
+	 */
+	protected void reset() {
+		dealNdx = 0;
+	}
+	
 	/**
 	 * Returns the name of this <tt>Deck</tt>.
 	 * 
@@ -127,7 +132,10 @@ public class Deck implements Serializable {
 	 */
 	public PlayingCard[] deal(final int number) {
 		PlayingCard[] tmpCards = null;
-		if (cards.length < dealNdx + number) {
+		if (number < 0) {
+			tmpCards = new PlayingCard[0];
+		}
+		else if (cards.length < dealNdx + number) {
 			tmpCards = this.dealAll();
 		}
 		else {

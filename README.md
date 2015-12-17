@@ -6,17 +6,18 @@ Game rules are specified in a rules.<game>.txt file. The rules must specify the 
 ##Licensing
 The MIT License (MIT). See LICENSE.txt.
 
-##TO DO
-* Build rules engine by reading rules plugin file
-* Basic testing of following rules
-* Create test suite of plugin files to test various possible inputs
-* Expand test benches to test over multiple test suites
-* Organize documentation
+##To Do
+* Add engine operations
+* Create rules for additional games
 
 ##Complete
 * Basic strutures built and tested (playing card, deck, cardpile, board)
 * Reading and parsing plugin files using keywords
 * Reading rules to create CardDealer - initially deal cards to piles
+* Engine capable of reading conditions and performing actions
+* Simple GUI created to test engine and show cards moving around
+* Simple welome screen created to get choose a game and get player information
+* Driver created to load the welcome GUI, create an engine, and load a main GUI
 
 ##Directory Structure
 	/root
@@ -31,7 +32,7 @@ The MIT License (MIT). See LICENSE.txt.
 	|	|
 	|	|___/games			=> java games package
 	|		|
-	|		|___/engine			=> games engine package
+	|		|___/engine			=> games engine package and core components
 	|			|
 	|			|___/gui			=> graphical user interface
 	|			|
@@ -43,5 +44,5 @@ The MIT License (MIT). See LICENSE.txt.
 	|
 	|___LICENSE.txt		=> License and warranty info
 	|
-	|___README.md		=> General information 
+	|___README.md		=> General information (What you are currently reading!)
 

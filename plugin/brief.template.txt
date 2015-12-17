@@ -1,0 +1,17 @@
+######################################################
+# Template for Game Brief
+#
+# Name Format: brief.<game>.txt
+#
+# A Brief is a concise explanation of the game, and should contain a
+# a few short sentence describing the object of the game, the suggested
+# age range, number of players, and other such information.
+#
+# Aside from comments, the contents of this brief will be read and
+# and reprinted exactly as shown, without formatting.
+#
+# Comments start with the <#> symbol and terminate at the EOL
+######################################################
+
+
+

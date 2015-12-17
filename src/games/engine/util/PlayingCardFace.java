@@ -14,9 +14,7 @@
 ****************************************************************************/
 package games.engine.util;
 
-public final class PlayingCardFace extends AbstractAttribute<PlayingCardFace> {
-
-	private static final long serialVersionUID = 4140460021282972364L;
+public final class PlayingCardFace extends PlayingCardAttribute<PlayingCardFace> {
 
 	/**
 	 * Constructs a new <tt>PlayingCardFace</tt> attribute.

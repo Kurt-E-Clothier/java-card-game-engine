@@ -2,7 +2,7 @@
 # Idiot Card Game Board Configuration File
 # Card pile names must match those in rules!
 ######################################################
-game idiot
+name test
 
 # stock card pile is the left over cards after hands are dealt
 cardpile
@@ -23,17 +23,6 @@ cardpile
 	placement stack
 	orientation portrait
 	removal all
-	
-# player hand
-cardpile
-	name hand
-	owner player
-	visibility owner
-	visible all
-	placement spread
-	orientation portrait
-	tiling horizontal
-	removal any
 
 # reserved cards, face down
 cardpile
@@ -53,6 +42,17 @@ cardpile
 	visibility all
 	visible all
 	placement spaced
+	orientation portrait
+	tiling horizontal
+	removal any
+	
+# player hand
+cardpile
+	name hand
+	owner player
+	visibility owner
+	visible all
+	placement spread
 	orientation portrait
 	tiling horizontal
 	removal any

@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			PlayingCardRanking.java
 * @author		Kurt E. Clothier
-* @date			November 14, 2015
+* @date			December 7, 2015
 *
 * @breif		Ranking for playing cards
 *
@@ -14,33 +14,34 @@
 ****************************************************************************/
 package games.engine.util;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class PlayingCardRanking implements Serializable, Comparator<PlayingCard> {
+import games.Strings;
+
+public final class PlayingCardRanking implements Comparator<PlayingCard> {
 	
-	private static final long serialVersionUID = 8219065314816410816L;
-	private final Map<String, Integer> faceRanks;
-	private final Map<String, Integer> groupRanks;
+	/** Type of card ranking */
+	public static enum Type {
+		/** Ranking by Face */
+		FACE,
+		/** Ranking by Group */
+		GROUP;
+	}
+	
+	private final Map<PlayingCardFace, Integer> faceRanks;
+	private final Map<PlayingCardGroup, Integer> groupRanks;
 	
 	/**
-	 * Constructs a new <tt>PlayingCardRanking</tt> with the specifed mapping.
+	 * Constructs a new <tt>PlayingCardRanking</tt> with the specified mapping.
 	 * 
 	 * @param faceRanks mapping of PlayingCard faces to numeric values
 	 * @param groupRanks mapping of PlayingCard groups to numeric values
-	 * @throws IllegalArgumentException if both parameters are null or empty
 	 */
-	public PlayingCardRanking(final Map<String, Integer> faceRanks, 
-							  final Map<String, Integer> groupRanks) throws IllegalArgumentException {
-		if (faceRanks == null && groupRanks == null ||
-			faceRanks == null && groupRanks.isEmpty() ||
-			groupRanks == null && faceRanks.isEmpty()) {
-			throw new IllegalArgumentException("Both parameters cannot be null or empty!");
-		}
-		this.faceRanks = new ConcurrentHashMap<String, Integer>(faceRanks);
-		this.groupRanks = new ConcurrentHashMap<String, Integer>(groupRanks);
+	public PlayingCardRanking(final Map<PlayingCardFace, Integer> faceRanks, final Map<PlayingCardGroup, Integer> groupRanks) {
+		this.faceRanks = faceRanks == null ? null : new ConcurrentHashMap<PlayingCardFace, Integer>(faceRanks);
+		this.groupRanks = groupRanks == null ? null : new ConcurrentHashMap<PlayingCardGroup, Integer>(groupRanks);
 	}
 	
 	/**
@@ -78,6 +79,25 @@ public final class PlayingCardRanking implements Serializable, Comparator<Playin
 		return valueOf(A) - valueOf(B);
 	}
 	
-	
-
+	/**
+	 * Returns this <tt>PlayingCardRanking</tt> as a string.
+	 *
+	 * @return this <tt>PlayingCardRanking</tt> as a string
+ 	 */
+	@Override public String toString() {
+		final StringBuilder str = new StringBuilder();
+		if (!(faceRanks == null || faceRanks.isEmpty())) {
+			str.append("Face Ranks:").append(Strings.NEW_LINE);
+			for (final PlayingCardFace key : faceRanks.keySet()) {
+				str.append(key).append(" = ").append(faceRanks.get(key)).append(Strings.NEW_LINE);
+			}
+		}
+		if (!(groupRanks == null || groupRanks.isEmpty())) {
+			str.append("Group Ranks:").append(Strings.NEW_LINE);
+			for (final PlayingCardGroup key : groupRanks.keySet()) {
+				str.append(key).append(" = ").append(groupRanks.get(key)).append(Strings.NEW_LINE);
+			}
+		}
+		return str.toString();
+	}
 }

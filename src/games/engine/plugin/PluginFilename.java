@@ -129,7 +129,7 @@ public final class PluginFilename implements Serializable {
 	}
 	
 	/**
-	 * Returns the type of this <tt>PluginFilename</tt> as a string.
+	 * Returns the type of this <tt>PluginFilename</tt>.
 	 * 
 	 * @return the type of this plugin filename
 	 */
@@ -142,6 +142,27 @@ public final class PluginFilename implements Serializable {
 			}
 		}
 		return type;
+	}
+	
+	/** 
+	 * Returns a <tt>PluginFile</tt> created with this <tt>PluginFilename</tt>.
+	 * 
+	 * @return a <tt>PluginFile</tt> created with this <tt>PluginFilename</tt>
+	 * @throws PluginException if the plugin does not exist
+	 */
+	public PluginFile toFile() throws PluginException {
+		return new PluginFile(this);
+	}
+	
+	/** 
+	 * Returns a <tt>PluginFile</tt> created with the raw name of this <tt>PluginFilename</tt>.
+	 * 
+	 * @param type the type of plugin file to create
+	 * @return a <tt>PluginFile</tt> created with the raw name of this <tt>PluginFilename</tt>
+	 * @throws PluginException if the plugin does not exist
+	 */
+	public PluginFile toFile(final Plugin.Type type) throws PluginException {
+		return new PluginFile(new PluginFilename(type, this.getRawName()));
 	}
 	
 /*------------------------------------------------

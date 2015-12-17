@@ -23,17 +23,6 @@ cardpile
 	placement stack
 	orientation portrait
 	removal all
-	
-# player hand
-cardpile
-	name hand
-	owner player
-	visibility owner
-	visible all
-	placement spread
-	orientation portrait
-	tiling horizontal
-	removal any
 
 # reserved cards, face down
 cardpile
@@ -53,6 +42,17 @@ cardpile
 	visibility all
 	visible all
 	placement spaced
+	orientation portrait
+	tiling horizontal
+	removal any
+	
+# player hand
+cardpile
+	name hand
+	owner player
+	visibility owner
+	visible all
+	placement spread
 	orientation portrait
 	tiling horizontal
 	removal any

@@ -1,0 +1,38 @@
+######################################################
+# Template for Game Brief
+#
+# Name Format: brief.<game>.txt
+#
+# A Brief is a concise explanation of the game, and should contain a
+# a few short sentence describing the object of the game. Rules, the 
+# suggested age range, number of players, and other such information
+# is also relevant.
+#
+# Aside from comments, the contents of this brief will be read and
+# and reprinted exactly as shown, without formatting.
+#
+# Comments start with the <#> symbol and terminate at the EOL
+######################################################
+2 - 4 Players, Ages 7+
+
+Idiot is a fast paced, card shedding game. The object is to be the first to discard all of your cards.
+
+A card can only be played if it is of equal or greater value to the top card of the discard pile.
+
+If you cannot play a card, you must take the entire discard pile into your hand, and your turn ends. You can also take the entire discard pile into your hand instead of playing a card.
+
+As long as there are cards to draw, you should always have three cards in your hand.
+
+In addition to the hand, each player will have three upward facing cards that can only be played when the hand and stock piles are empty. Three downward facing cards must be played blindly once all other cards have been played.
+
+After dealing, but before play begins, each player is free to exchange cards between the hand and face up reserves.
+
+A "2", "5", or "10" can be played on top of any other card. A "2" restarts the pile. A "5" reverse the play - the next card must be less than or equal value. A "10" burns the pile, removing all discarded cards from play, and it is still your turn.
+
+The cards are ranked as: 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
+
+Multiple cards of the same ranking can be played at once from the hand or face up reserves.
+
+If there are four cards of the same rank on top of the discard pile, it is removed from play.
+
+You can elect to blindly play the top stock card onto the discard pile, but must take the entire discard pile into your hand if the card does not meet the previous play requirements.

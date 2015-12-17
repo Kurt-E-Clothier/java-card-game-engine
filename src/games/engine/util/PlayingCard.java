@@ -15,8 +15,6 @@
 
 package games.engine.util;
 
-import java.io.Serializable;
-
 /******************************************************************//**
  * The PlayingCard Class
  * - An individual playing card used in a game
@@ -24,12 +22,11 @@ import java.io.Serializable;
  * Limitations
  * - Cannot handle special attributes or card actions
  *********************************************************************/
-public final class PlayingCard implements Comparable<PlayingCard>, Serializable, Cloneable {		
+public final class PlayingCard implements Comparable<PlayingCard>, Cloneable {		
 		
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/
-	private static final long serialVersionUID = 3411088408983232224L;
 	private final PlayingCardFace face;		// The name of the card, Ex: "2" or "King"
 	private final PlayingCardGroup group;	// The group of the card, Ex: "Hearts" or "Clubs"
 	

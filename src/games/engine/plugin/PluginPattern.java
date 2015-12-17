@@ -25,6 +25,9 @@ public enum PluginPattern {
 	/** Single comma */
 	COMMA (","),
 	
+	/** Dash, Hyphen */
+	DASH ("-"),
+	
 	/** Period pattern, with escapes */
 	PERIOD ("\\."),
 	

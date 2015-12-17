@@ -15,12 +15,10 @@
 ****************************************************************************/
 package games.engine.util;
 
-import java.io.Serializable;
+import games.Strings;
 
-public final class CardPileParameter implements Serializable {
+public final class CardPileParameter {
 	
-	private static final long serialVersionUID = -3548990725905740643L;
-
 /*------------------------------------------------
  	Keyword Parameter Enumerations
  ------------------------------------------------*/
@@ -96,7 +94,6 @@ public final class CardPileParameter implements Serializable {
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/	
-	private static final String NEW_LINE = System.getProperty("line.separator");
 	private final String name;
 	private final CardPileParameter.Owner owner;
 	private final CardPileParameter.Visibility visibility;
@@ -216,6 +213,11 @@ public final class CardPileParameter implements Serializable {
 	
 	/**
 	 * Returns the number of visible Cards in this <tt>CardPile</tt>.
+	 * Note, this number only applies when <tt>Visible</tt>
+	 * has been set to Visible.NUMBER.
+	 * 
+	 * Otherwise, the number of visible cards depends on numerous
+	 * other factors which are unknown to this class.
 	 * 
 	 * @return the number of visible Cards in this CardPile
 	 */
@@ -233,15 +235,15 @@ public final class CardPileParameter implements Serializable {
 	 */
 	@Override  public String toString() {
 		final StringBuilder str = new StringBuilder();
-		str.append("CardPile: ").append(name).append(NEW_LINE)
-		   .append("Owner: ").append(owner).append(NEW_LINE)
-		   .append("Visibility: ").append(visibility).append(NEW_LINE)
+		str.append("CardPile: ").append(name).append(Strings.NEW_LINE)
+		   .append("Owner: ").append(owner).append(Strings.NEW_LINE)
+		   .append("Visibility: ").append(visibility).append(Strings.NEW_LINE)
 		   .append("Visible: ").append(visible).append(" (")
-		   .append(numVisible).append(')').append(NEW_LINE)
-		   .append("Placement: ").append(placement).append(NEW_LINE)
-		   .append("Orientation: ").append(orientation).append(NEW_LINE)
-		   .append("Tiling: ").append(tiling).append(NEW_LINE)
-		   .append("Removal: ").append(removal).append(NEW_LINE);
+		   .append(numVisible).append(')').append(Strings.NEW_LINE)
+		   .append("Placement: ").append(placement).append(Strings.NEW_LINE)
+		   .append("Orientation: ").append(orientation).append(Strings.NEW_LINE)
+		   .append("Tiling: ").append(tiling).append(Strings.NEW_LINE)
+		   .append("Removal: ").append(removal).append(Strings.NEW_LINE);
 		return str.toString();
 	}	
 

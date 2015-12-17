@@ -1,7 +1,7 @@
 /***********************************************************************//**
 * @file			CardDealer.java
 * @author		Kurt E. Clothier
-* @date			November 19, 2015
+* @date			November 30, 2015
 *
 * @breif		Dealer for a card game
 *
@@ -16,14 +16,12 @@
 
 package games.engine.util;
 
-import java.io.Serializable;
-
 /******************************************************************//**
  * The CardDealer Class
  * - This class represents the CardDealer in a card game.
  **********************************************************************/
-public class CardDealer implements Serializable {
-	
+public final class CardDealer {
+
 /*------------------------------------------------
  	Keyword Parameter Enumerations
  ------------------------------------------------*/
@@ -49,6 +47,7 @@ public class CardDealer implements Serializable {
 	private final CardPlayer[] players;
 	private final CardDealerSet playerPairs;
 	private final CardDealerSet commonPairs;
+	private final boolean shouldShuffle;
 	
 	private boolean isDoneDealing;			// true when done dealing to all piles
 	private boolean isDoneWithPlayerPiles;	// true when done dealing to player piles
@@ -56,24 +55,25 @@ public class CardDealer implements Serializable {
 	private int nextPileNdx;				// index to next pile in array to be dealt a card
 	private int cardsDealtToPile;			// current number of cards dealt to current pile
 	private int nextPlayerNdx;				// index to next player in array to be dealt a card
+	private int totalDealt;
 
 /*------------------------------------------------
  	Constructor(s)
  ------------------------------------------------*/
 	/**
 	 * Constructs a new <tt>CardDealer</tt> with the given attributes.
+	 * Dealer is best constructed using the <tt>CardDealerFactory</tt>.
 	 *
 	 * @param deck the deck of cards from which to deal
 	 * @param players array of players to be dealt cards
 	 * @param commonPiles collection of the common card piles
 	 * @param direction the direction of dealing
 	 * @param collate if card piles should be completed before dealing to next pile
-	 * @param playerPileNames array of names of the player owned piles
-	 * @param playerPileTotals array of totals of cards to be dealt to player piles
-	 * @param commonPileNames array of names of the common piles
-	 * @param commonPileTotals array of totals of cards to be dealt to common piles
+	 * @param shuffle if the cards should be shuffled before dealing
+	 * @param playerPairs set of player pile names and number of cards to deal
+	 * @param commonPairs set of common pile names and number of cards to deal
 	 */
-	public CardDealer(final CardPileCollection commonPiles, final Deck deck, final CardPlayer[] players, 
+	public CardDealer(final CardPileCollection commonPiles, final Deck deck, final CardPlayer[] players,
 					  final CardDealer.Direction direction, final boolean collate, final boolean shuffle,
 					  final CardDealerSet playerPairs, final CardDealerSet commonPairs) {
 		this.deck = deck;
@@ -81,12 +81,14 @@ public class CardDealer implements Serializable {
 		this.collate = collate;
 		this.playerPairs = playerPairs;
 		this.commonPairs = commonPairs;
+		this.shouldShuffle = shuffle;
 		this.isDoneDealing = false;
 		this.isDoneWithPlayerPiles = false;
 		this.isDoneWithCommonPiles = false;
 		this.nextPileNdx = 0;
 		this.cardsDealtToPile = 0;
 		this.nextPlayerNdx = 0;
+		this.totalDealt = 0;
 		
 		// Get references to card players (do this manually to reorder players if necessary)
 		this.players = new CardPlayer[players.length];
@@ -107,16 +109,56 @@ public class CardDealer implements Serializable {
 		// Shuffle the deck
 		if (shuffle) {
 			this.deck.shuffle();
+			this.deck.shuffle();
 		}
 	}
 	
 /*------------------------------------------------
-    Accessors and Mutators
+    Utility Methods
  ------------------------------------------------*/
 	/**
-	 * Deal next card to a pile, and return <tt>true</tt> if done dealing.
+	 * Reset this <tt>CardDealer</tt> and <tt>Deck</tt> to the default state.
+	 */
+	public void reset() {
+		this.isDoneDealing = false;
+		this.isDoneWithPlayerPiles = false;
+		this.isDoneWithCommonPiles = false;
+		this.nextPileNdx = 0;
+		this.cardsDealtToPile = 0;
+		this.nextPlayerNdx = 0;
+		this.totalDealt = 0;
+		deck.reset();
+		if (shouldShuffle) {
+			this.deck.shuffle();
+			this.deck.shuffle();
+		}
+	}
+	
+	/**
+	 * Returns <tt>true</tt> if the dealing is done.
+	 * 
+	 * @return true if the dealing is done
+	 */
+	public boolean isDone() {
+		return isDoneDealing;
+	}
+	
+	/**
+	 * Returns information about this dealer.
+	 * 
+	 * @return string information about this dealer
+	 */
+	@Override public String toString() {
+		final StringBuilder str = new StringBuilder();
+		str.append("Dealt ").append(totalDealt).append(" of ")
+		   .append(deck.getSize()).append(" cards.");
+		return str.toString();
+	}
+	
+	/**
+	 * Deal next card to a pile, and return a string of information.
 	 *
-	 * @return 
+	 * @return information about the card dealing
 	 */
 	public String dealNext() {
 		String string = null;
@@ -131,6 +173,15 @@ public class CardDealer implements Serializable {
 			string = "";
 		}
 		return string;
+	}
+	
+	/**
+	 * Deal all remaining cards to the appropriate places.
+	 */
+	public void dealAll() {
+		while(!isDoneDealing) {
+			dealNext();
+		}
 	}
 	
 	/*
@@ -149,6 +200,7 @@ public class CardDealer implements Serializable {
 			else {
 				final CardPile pile = commonPiles.get(commonPairs.getCardPileName(this.nextPileNdx));
 				pile.add(card);
+				++totalDealt;
 				StringBuilder str = new StringBuilder();
 				str.append("Dealt ").append(card.toString())
 				   .append(" to common.")
@@ -157,7 +209,7 @@ public class CardDealer implements Serializable {
 			}
 		}
 		
-		// Deal all cards to each pile
+		// Handle the deal counts
 		if (++cardsDealtToPile >= commonPairs.getNumCardsToDeal(this.nextPileNdx)) {
 			// Deal to next pile when done dealing to this pile
 			cardsDealtToPile = 0;
@@ -187,6 +239,7 @@ public class CardDealer implements Serializable {
 			else {
 				final CardPile pile = players[nextPlayerNdx].getPlayerPiles().get(playerPairs.getCardPileName(this.nextPileNdx));
 				pile.add(card);
+				++totalDealt;
 				StringBuilder str = new StringBuilder();
 				str.append("Dealt ").append(card.toString())
 				   .append(" to player.")
@@ -235,14 +288,4 @@ public class CardDealer implements Serializable {
 		}
 		return string == null ? "" : string;
 	}
-	
-	/**
-	 * Returns <tt>true</tt> if the dealing is done.
-	 * 
-	 * @return true if the dealing is done
-	 */
-	public boolean isDone() {
-		return isDoneDealing;
-	}
-
 }

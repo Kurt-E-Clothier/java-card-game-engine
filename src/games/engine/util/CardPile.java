@@ -16,7 +16,6 @@
 
 package games.engine.util;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,14 +33,12 @@ import games.engine.util.PlayingCard;
  * - Finish sorting methods (and testing)
  * - Integration testing with Board text file
  **********************************************************************/
-public final class CardPile implements Serializable{
-
-	//private static final long serialVersionUID = 6688290548979452850L;
+public final class CardPile {
 
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/	
-	private final CardPileParameter parameters;
+	private final CardPileParameter params;
 	private final List<PlayingCard> cards;
 	
 /*------------------------------------------------
@@ -59,8 +56,8 @@ public final class CardPile implements Serializable{
 	 * @param tiling how are the cards in this pile tiled
 	 * @param removal how are cards removed from this pile
 	 */
-	public CardPile(final CardPileParameter parameters) {
-		this.parameters = parameters;
+	public CardPile(final CardPileParameter params) {
+		this.params = params;
 		cards = new LinkedList<PlayingCard>();
 	}
 	
@@ -74,7 +71,7 @@ public final class CardPile implements Serializable{
 	 * @return the name of this CardPile
 	 */
 	public CardPileParameter getParameters() {
-		return parameters;
+		return params;
 	}
 	
 	/**
@@ -86,6 +83,15 @@ public final class CardPile implements Serializable{
 		return cards.size();
 	}
 	
+	/**
+	 * Returns <tt>true</tt> if this <tt>CardPile</tt> is empty.
+	 * 
+	 * @return <tt>true</tt> if this <tt>CardPile</tt> is empty
+	 */
+	public boolean isEmpty() {
+		return cards.isEmpty();
+	}
+	
 /*------------------------------------------------
     Card Utility Methods
  ------------------------------------------------*/
@@ -94,11 +100,13 @@ public final class CardPile implements Serializable{
 	 * It is undefined behavior to use this card pile as the specified array.
 	 * 
 	 * @param cards	the playing card(s) to be added
+	 * @return <tt>True</tt> if any cards were added
 	 */
-	public void add(final PlayingCard...cards) {
+	public boolean add(final PlayingCard...cards) {
 		for (final PlayingCard card : cards){
 			this.cards.add(card);
 		}
+		return cards.length > 0 ? true : false;
 	}
 	
 	/**
@@ -106,10 +114,12 @@ public final class CardPile implements Serializable{
 	 * It is undefined behavior to use this card pile as the specified collection.
 	 * 
 	 * @param cards	the playing cards to be added
+	 * @return <tt>True</tt> if any cards were added
 	 * @throws NullPointerException - if the specified collection is null
 	 */
-	public void add(final Collection<PlayingCard> cards) throws NullPointerException {
+	public boolean add(final Collection<PlayingCard> cards) throws NullPointerException {
 		this.cards.addAll(cards);
+		return !cards.isEmpty();
 	}
 	
 	/**
@@ -178,12 +188,48 @@ public final class CardPile implements Serializable{
 	}
 	
 	/**
+	 * Returns a random <tt>PlayingCard</tt> from this <tt>CardPile</tt>.
+	 * 
+	 * @return a random PlayingCard from this CardPile
+	 */
+	public PlayingCard getRandom() {
+		return cards.get(ThreadLocalRandom.current().nextInt(cards.size()));
+	}
+	
+	/**
+	 * Removes and returns a random <tt>PlayingCard</tt> from this <tt>CardPile</tt>.
+	 * 
+	 * @return a random PlayingCard from this CardPile
+	 */
+	public PlayingCard removeRandom() {
+		return cards.remove(ThreadLocalRandom.current().nextInt(cards.size()));
+	}
+	
+	/**
 	 * Returns all of the <tt>PlayingCards</tt> from this <tt>CardPile</tt>.
 	 * 
 	 * @return all of the PlayingCards from this CardPile
 	 */
-	public PlayingCard[] getAll() {
-		return this.cards.toArray(new PlayingCard[cards.size()]);
+	public PlayingCard[] get() {
+		return this.get(cards.size());
+	}
+	
+	/**
+	 * Returns the specified number of <tt>PlayingCards</tt> from this <tt>CardPile</tt>.
+	 * Returns all cards if the specified number is larger than the size of this pile.
+	 * 
+	 * @param number how many cards to be returned
+	 * @return a number of PlayingCards from this CardPile
+	 */
+	public PlayingCard[] get(final int number) {
+		// This is a little strange, but it's correct...
+		// we want to invert the array because index(0) is the bottom (first card to go in)
+		final int num = number > cards.size() ? cards.size() : number;
+		PlayingCard[] c = new PlayingCard[num];
+		for (int i = 0; i < num; i++) {
+			c[i] = cards.get(cards.size() - i - 1);
+		}
+		return c;
 	}
 	
 	/**
@@ -192,7 +238,7 @@ public final class CardPile implements Serializable{
 	 * @return all of the PlayingCards from this CardPile
 	 */
 	public PlayingCard[] removeAll() {
-		final PlayingCard[] temp = this.getAll();
+		final PlayingCard[] temp = this.get();
 		cards.clear();
 		return temp;
 	}
@@ -268,7 +314,7 @@ public final class CardPile implements Serializable{
 	 */
 	@Override  public String toString() {
 		final StringBuilder str = new StringBuilder();
-		str.append(parameters.toString())
+		str.append(params.toString())
 		   .append("Top Card: ").append(cards.isEmpty() ? "NONE" : 
 			   		((LinkedList<PlayingCard>) cards).getLast().toString());
 		return str.toString();

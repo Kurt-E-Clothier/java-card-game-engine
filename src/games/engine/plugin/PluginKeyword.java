@@ -28,11 +28,17 @@ public enum PluginKeyword {
 /*------------------------------------------------
  	Rules Specific Keywords
  ------------------------------------------------*/
+	/** Players - Number of players for this game */
+	PLAYERS,
+	
 	/** Deck - Name of deck to use */
 	DECK,
 	
 	/** Ranking - specify the card ranking */
 	RANKING,
+	
+	/** End-Ranking - end of card ranking */
+	END_RANKING,
 	
 	/** Alias - specify a card name alias */
 	ALIAS,
@@ -46,8 +52,8 @@ public enum PluginKeyword {
 	/** Deal - start deal info section */
 	DEAL,
 	
-	/** Deal-End - end deal info section */
-	DEAL_END,
+	/** End-Deal - end deal info section */
+	END_DEAL,
 	
 	/** Shuffle - should cards be shuffled before being dealt */
 	SHUFFLE,
@@ -57,6 +63,45 @@ public enum PluginKeyword {
 	
 	/** Collate - should the dealing be collated */
 	COLLATE,
+	
+	/** Start-Phase - name of the starting phase for players */
+	START_PHASE,
+	
+	/** Phase - start of a game phase description */
+	PHASE,
+	
+	/** End-Phase - End of a game phase description */
+	END_PHASE,
+	
+	/** Action - Describes a type of action */
+	ACTION,
+	
+	/** End-Action - End of actions */
+	END_ACTION,
+	
+	/** Controlled-Action - Describes a conditional action */
+	CONTROLLED_ACTION,
+	
+	/** End-Controlled-Action - End of controlled actions */
+	END_CONTROLLED_ACTION,
+	
+	/** Condition - Describes a boolean expression */
+	CONDITION,
+	
+	/** End-Condition - End of Conditions */
+	END_CONDITION,
+	
+	/** Repeat - do an action again */
+	REPEAT,
+	
+	/** Do - perform some action */
+	DO,
+	
+	/** Allow - allow some action to be performed */
+	ALLOW,
+	
+	/** End-Allow - end of allowed actions */
+	END_ALLOW,
 	
 /*------------------------------------------------
  	Board Specific Keywords
@@ -123,6 +168,17 @@ public enum PluginKeyword {
 	 * Construct this plugin keyword.
 	 */
 	private PluginKeyword() {}
+	
+	/**
+	 * Compare this keyword to the specified string.
+	 * Returns <tt>true</tt> if they are the same, ignoring case.
+	 * 
+	 * @param string the string to compare to this keyword 
+	 * @return <tt>true</tt> if they are the same, ignoring case
+	 */
+	public boolean compareToString(final String string) {
+		return string != null && string.equalsIgnoreCase(this.toString());
+	}
 	
 	/**
 	 * Returns the parameter(s) to upper case found after the first occurrence of this keyword in the specified <tt>Plugin</tt>.

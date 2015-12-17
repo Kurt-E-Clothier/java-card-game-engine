@@ -13,7 +13,8 @@ public final class DealerTB {
 		final Deck deck = DeckFactory.INSTANCE.createDeck(rulesPlugin);
 		
 		final CardPileFactory factory = CardPileFactory.getInstance();
-		final Plugin[] pilePlugins = factory.createPlugins(rulesPlugin);
+		final Plugin boardPlugin = new Plugin(Plugin.Type.BOARD, rulesPlugin.checkParamsFor(PluginKeyword.BOARD));
+		final Plugin[] pilePlugins = factory.createPlugins(boardPlugin);
 		final CardPileCollection commonPileCollecion = factory.createCardPileCollection(CardPileParameter.Owner.COMMON, pilePlugins);
 		
 		final CardPlayer[] players = new CardPlayer[3];
@@ -23,9 +24,11 @@ public final class DealerTB {
 		
 		final CardDealer dealer = CardDealerFactory.INSTANCE.createCardDealer(rulesPlugin, commonPileCollecion, deck, players);
 		
+		System.out.println(dealer.toString());
 		while(!dealer.isDone()){
 			System.out.println(dealer.dealNext());
 		}
+		System.out.println(dealer.toString());
 		
 		// SUCCESS!!
 	}

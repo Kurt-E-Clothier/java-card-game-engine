@@ -15,14 +15,12 @@
 ****************************************************************************/
 package games.engine.util;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 import games.Strings;
 
-public final class CardPileCollection implements Serializable {
+public final class CardPileCollection {
 	
-	private static final long serialVersionUID = 337708074501418736L;
 	private final CardPile[] piles;
 	
 	/**
@@ -35,6 +33,33 @@ public final class CardPileCollection implements Serializable {
 			throw new IllegalArgumentException("Piles cannot be null or empty!");
 		}
 		this.piles = Arrays.copyOf(piles, piles.length);
+	}
+	
+	/**
+	 * Returns the number of <tt>CardPiles</tt> in this <tt>CardPileCollecion</tt>.
+	 * 
+	 * @return the number of <tt>CardPiles</tt> in this <tt>CardPileCollecion</tt>
+	 */
+	public int getSize() {
+		return piles.length;
+	}
+	
+	/**
+	 * Returns this <tt>CardPileCollecion</tt> as an array of <tt>CardPiles</tt>. 
+	 * 
+	 * @return this <tt>CardPileCollecion</tt> as an array of <tt>CardPiles</tt>
+	 */
+	public CardPile[] toArray() {
+		return Arrays.copyOf(piles, piles.length);
+	}
+	
+	/**
+	 * Returns all of the <tt>CardPiles</tt> from this <tt>CardPileCollecion</tt>.
+	 * 
+	 * @return all of the <tt>CardPiles</tt> from this <tt>CardPileCollecion</tt>
+	 */
+	public CardPile[] get() {
+		return toArray();
 	}
 	
 	/**

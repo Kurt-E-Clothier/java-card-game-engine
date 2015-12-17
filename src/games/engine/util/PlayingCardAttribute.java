@@ -1,5 +1,5 @@
 /***********************************************************************//**
-* @file			AbstractAttribute.java
+* @file			PlayingCardAttribute.java
 * @author		Kurt E. Clothier
 * @date			November 14, 2015
 *
@@ -15,21 +15,19 @@
 
 package games.engine.util;
 
-import java.io.Serializable;
-public abstract class AbstractAttribute<T extends AbstractAttribute<T>> 
-		implements Cloneable, Serializable, Comparable<T> {
+public abstract class PlayingCardAttribute<T extends PlayingCardAttribute<T>> 
+		implements Cloneable, Comparable<T> {
 
-	private static final long serialVersionUID = 5995768698784185027L;
 	private final String field;	
 	
 	/**
-	 * Constructs a new <tt>AbstractAttribute</tt>.
+	 * Constructs a new <tt>PlayingCardAttribute</tt>.
 	 * For use by extended classes only.
 	 * 
 	 * @param field String this attribute represents
 	 * @throws IllegalArgumentException if the parameter is null
 	 */
-	protected AbstractAttribute(final String field) throws IllegalArgumentException {
+	protected PlayingCardAttribute(final String field) throws IllegalArgumentException {
 		if (field == null) {
 			throw new IllegalArgumentException("Attribute cannot be null!");
 		}
@@ -75,7 +73,7 @@ public abstract class AbstractAttribute<T extends AbstractAttribute<T>>
 	@Override public boolean equals(final Object that) {
 		return	that != null &&
 				that.getClass() == this.getClass() &&
-				((AbstractAttribute<?>)that).field.equals(this.field);
+				((PlayingCardAttribute<?>)that).field.equals(this.field);
 	}
 	
 	/**

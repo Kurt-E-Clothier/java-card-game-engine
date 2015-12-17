@@ -11,18 +11,48 @@ name test
 
 players 2-4
 
-# dealer as player ??? (blackjack)
+# some way to allow dealer as AI player ??? (blackjack)
 
 deck test
-ranking 2,3,4,5,6,7,8,9,10,jack,queen,king,ace
-alias 2 restart
-alias 5 reverse
-alias 10 burn
+
+#################################
+# Playing Card Ranking
+#	- can be done for faces, groups, or both
+#	- be sure to include ALL faces or groups to avoid runtime exceptions
+# Format Option 1: (use for simple ranking)
+# ranking <face, group> <lowest ranked face>,<face>,<face>,<highest ranked face>
+# Format Option 2: (use when different cards can be ranked the same thing)
+# ranking <face, group>
+#	face <numeric value>
+#	...
+# end-ranking
+#################################
+ranking face 2,3,4,5,6,7,8,9,10,jack,queen,king,ace
+ranking group
+	hearts 1
+	diamonds 1
+	clubs 1
+	spades 1
+end-ranking
+
+#################################
+# Playing Card Alias
+# Format: 
+# alias <unique-name-without-spaces> <card face> <(optional) card group>
+#################################
+alias restart 2
+alias reverse 5
+alias burn 10
 
 board test
 
 direction-of-play cw
 
+start-phase 1
+
+#################################
+# Describe the dealing
+#################################
 deal
 	shuffle yes
 	direction cw
@@ -33,31 +63,309 @@ deal
 		hand 3
 	common-piles
 		stock all
-deal-end
+end-deal
 
-# RULES .... ?
+#################################
+# Engine Components
+# Format: 
+# <action, condition> <unique-name-without-spaces>
+#	<operation> <variables> <...>
+#	<(Optional) String description>
+#
+# Defining a CardPile:
+#	owner.name
+#
+# Defining a PlayingCard:
+#	definedCardpile.<top, bottom, random, top-n, bottom+n>
+#	where +-n is up/down n cards from the bottom/top
+#################################
 
-#rule id string
-#valid comparisons: =,<,>,<=,>=,!= 
-# a card's card piles is <owner> <name>
-#assert card <current pile> <location (top, bottom, top-1, top-2, etc)> <face, rank, group> <comparison> <string, number, another card>
-#assert $card <face, rank, group> <comparison> <string, number, another card>
-# Currently, only concerned with cardpile size.. more can be added later, like <contains> card
-#assert cardpile <owner> <name> <size> <comparison> <number>
-#assert $cardpile <size> <comparison> <number>
+#################################
+# Define all conditions which govern other actions
+#	- append condition with "or" or "and" to chain statments
+#	- prefix condition with "not" to invert the statement
+#	- do not use parenthesis or mix and/or - create supporting conditions
+#	- statements must be a valid engine operation or another condition
+#	- define condition before using it in another condition
+#	- use "end-condition" after the final condition
+#	- use parameters for embedded operations
+#################################
 
-rule compare top 4
-assert cardpile common discard size
+condition is-restart-card
+	match-rank playing-card restart
+	
+condition is-reverse-card
+	match-rank playing-card reverse
+	
+condition is-burn-card
+	match-rank playing-card burn
 
+condition is-special-card
+	is-restart-card OR
+	is-reverse-card OR
+	is-burn-card
 
-if 	common.discard.size >= 4 and
-	common.discard.top = common.discard.top-1 and
-	common.discard.top = common.discard.top-2 and
-	common.discard.top = common.discard.top-3 then
-	operation 1
+### Check validity of a potential play
+condition is-normal-valid
+	not is-reverse-card common.discard.top AND
+	check-rank playing-card common.discard.top
+	
+condition is-reverse-valid
+	is-reverse-card common.discard.top AND
+	not check-rank playing-card common.discard.top
+	
+condition is-valid-play
+	check-if-empty common.discard OR				# discard pile is empty
+	is-special-card OR								# special card played
+	match-rank playing-card common.discard.top OR	# playing same rank as top card of discard pile
+	is-normal-valid OR								# played higher rank card
+	is-reverse-valid								# played lower rank card on reverse card
+	
+### Check validity of an already played card - used for stock and reserve-fd plays
+condition was-normal-valid
+	not is-reverse-card common.discard.top-1 AND
+	check-rank common.discard.top common.discard.top-1
+	
+condition was-reverse-valid
+	is-reverse-card common.discard.top-1 AND
+	not check-rank common.discard.top common.discard.top-1
+	
+condition was-valid-play
+	not check-size common.discard 1 OR						# discard pile has only 1 card
+	is-special-card common.discard.top OR					# special card played
+	match-rank common.discard.top common.discard.top-1 OR	# playing same rank as top card of discard pile
+	was-normal-valid common.discard.top OR					# played higher rank card
+	was-reverse-valid common.discard.top						# played lower rank card on reverse card
+	
+condition is-valid-multi-play
+	match-rank playing-cards AND							# All cards are the same
+	is-valid-play playing-card.top							# one of the cards is a valid play
 
-rule 18
-if 	player.hand.size < 3 and
-	common.stock.size > 0 then
-	operation 2
+condition is-discard-top-4
+	check-size common.discard 3 AND
+	match-rank common.discard.top common.discard.top-1 common.discard.top-2 common.discard.top-3
 
+condition is-discard-empty
+	check-if-empty common.discard
+	
+condition is-multiple-cards-in-hand
+	check-size current-player.hand 1
+	
+condition is-multiple-cards-in-reserve-fu
+	check-size current-player.reserve-fu 1
+	
+condition is-burn-condition
+	not is-discard-empty AND
+	is-burn-card-or-match4
+	
+condition is-burn-card-or-match4
+	is-discard-top-4 OR
+	is-burn-card common.discard.top
+	
+condition is-draw-condition
+	not check-size current-player.hand 2 AND
+	not check-if-empty common.stock
+	
+condition is-stock-empty
+	check-if-empty common.stock
+	
+condition is-phase2-condition
+	not check-if-empty current-player.hand
+	
+condition is-phase3-condition
+	check-if-empty current-player.hand AND
+	check-if-empty common.stock
+	
+condition is-phase4-condition
+	is-phase3-condition AND
+	check-if-empty current-player.reserve-fu
+		
+condition is-win-condition
+	is-phase4-condition AND
+	check-if-empty current-player.reserve-fd
+
+end-condition	
+
+#################################
+# List all possible game actions
+#	- actions can be manually performed by a player
+#	- actions can be automatically performed by the engine
+#	- use "end-action" after the final action
+#################################
+action ready
+	goto 2
+	Done exchanging cards - ready to play!
+	
+action exchange
+	exchange current-player.hand current-player.reserve-fu playing-card playing-card
+	Exchange a card(s) from your hand with your face up reserves.
+	
+action play
+	put current-player.hand common.discard playing-card
+	Play a card from your hand to the discard pile.
+	
+action play-multiple
+	put-multiple current-player.hand common.discard playing-cards
+	Play multiple of the same card from your hand to the discard pile.
+
+action play-stock	
+	put common.stock common.discard common.stock.top
+	Play the top card from the face down stock pile to the discard pile.
+	
+action play-reserve-fu
+	put current-player.reserve-fu common.discard playing-card
+	Play a card from your face up reserves to the discard pile.
+	
+action play-multiple-reserve-fu
+	put-multiple current-player.reserve-fu common.discard playing-cards
+	Play multiple of the same card from your face up reserves to the discard pile.
+	
+action play-reserve-fd
+	put current-player.reserve-fd common.discard playing-card
+	Play a card from your face down reserves to the discard pile.
+	
+action take-pile
+	put-all common.discard current-player.hand
+	Take all of the discard pile into your hand.
+
+action burn
+	remove-all common.discard
+	
+action add-discard-to-hand
+	put-all common.discard current-player.hand
+	
+action draw
+	put common.stock current-player.hand common.stock.top
+	
+action go-to-2
+	goto 2
+	
+action go-to-3
+	goto 3
+	
+action go-to-4
+	goto 4
+	
+action end-player-turn
+	end-turn
+	
+action current-player-wins
+	player-win current-player
+	
+action sort-player-hand
+	sort-by-rank current-player.hand
+	Sort the cards in your hand by rank.
+	
+end-action
+	
+#################################
+# List all controlled actions
+# check a previously defined condition, then do a previously defined action
+#	- use "not" to invert the condition
+#	- use "repeat" to repeat check and action, indefinitely, or a number of times
+# Format: 
+# controlled-action <unique-name-without-spaces>
+#	(optional) not <condition-name> <if true action-name> <if false action-name>
+#	(optional)repeat (optiona)<whole number times to repeat>
+#################################
+controlled-action try-to-burn
+	is-burn-condition burn end-player-turn
+	
+controlled-action try-to-draw
+	is-draw-condition draw
+	repeat # this is also limited to 3 times by the "is-draw-condition" check
+	
+controlled-action validate-play
+	not was-valid-play add-discard-to-hand
+	
+controlled-action try-phase2-condition
+	is-phase2-condition go-to-2
+
+controlled-action try-phase3-condition
+	is-phase3-condition go-to-3
+	
+controlled-action try-phase4-condition
+	is-phase4-condition go-to-4
+	
+controlled-action try-win-condition
+	is-win-condition current-player-wins
+	
+controlled-action try-to-play
+	is-valid-play play
+	
+controlled-action try-to-play-multiple
+	is-valid-multi-play play-multiple
+	
+controlled-action try-to-play-stock
+	not is-stock-empty play-stock
+	
+controlled-action try-to-play-reserve-fu
+	is-valid-play play-reserve-fu
+	
+controlled-action try-to-play-multiple-reserve-fu
+	is-valid-multi-play play-multiple-reserve-fu
+	
+end-controlled-action
+
+#################################
+# Define game phases... 
+# Need to include some action performing "goto" to go to a different phase, if applicable
+# Need to include some action performing "end-turn" to end the player's turn
+#	^ - otherwise, phase will repeat forever with same player
+# Format:
+#	phase <unique-name-without-spaces>
+#		do <name of action/controlled-action to do at start of phase (in order)> (optional repeat)
+#		do ...
+#		allow <name of action/controlled-action that a player can perform>
+#			# These response actions are performed even if the pre-condition for a controlled-action is not met
+#			# All necessary action parameters must be predfined, as none will be passed!
+#			do <name of action/controlled-action to perform in response to this player action>
+#			do ...
+#		allow ...
+#		<name of predefined condition that must be true to allow this action> allow ...
+#		end-allow	# to separate finishing actions from response actions
+#		do <name of action to do AFTER player makes a move (in order)>
+#		do ...
+#	end-phase
+#################################
+
+phase 1
+	allow ready
+		do end-player-turn
+	allow exchange
+	end-allow
+end-phase
+
+phase 2
+	do try-phase3-condition
+	allow sort-player-hand
+		do go-to-3
+	allow try-to-play
+	is-multiple-cards-in-hand allow try-to-play-multiple
+	not is-stock-empty allow try-to-play-stock
+		do validate-play
+	not is-discard-empty allow take-pile
+	end-allow
+	do try-to-draw
+	do try-to-burn	 # if pile is burned, current player continues, else turn ends
+end-phase
+
+phase 3
+	do try-phase2-condition
+	do try-phase4-condition
+	allow try-to-play-reserve-fu
+	is-multiple-cards-in-reserve-fu allow try-to-play-multiple-reserve-fu
+	not is-discard-empty allow take-pile
+	end-allow
+	do try-to-burn	 # if pile is burned, current player continues, else turn ends
+end-phase
+
+phase 4
+	do try-phase2-condition
+	allow play-reserve-fd
+		do validate-play
+	not is-discard-empty allow take-pile
+	end-allow
+	do try-win-condition
+	do try-to-burn	 # if pile is burned, current player continues, else turn ends
+end-phase

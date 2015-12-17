@@ -29,9 +29,6 @@ public final class PluginFile extends File {
 	 */
 	public PluginFile(final PluginFilename filename) throws PluginException {
 		super(Plugin.DIRECTORY, filename.toString());
-		if (!this.exists()) {
-			throw PluginException.create(PluginException.Type.DOES_NOT_EXIST, filename);
-		}
 		this.filename = filename;
 	}
 	

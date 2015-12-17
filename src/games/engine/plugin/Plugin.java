@@ -17,7 +17,6 @@ package games.engine.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -31,26 +30,22 @@ import games.Strings;
  * - A representation of the component data contained in a game plugin file
  * - Plugin is quasi-immutable
  * - Also contains various static utilities for handing plugin files
- * Issues
- * - This is likely a "god class," but the implementation makes sense
- * 		^ This could be fixed by splitting off the static methods
- * 		^ All non-static methods are important plugin utilities
  ********************************************************************/
-public class Plugin implements Serializable {
-
-	private static final long serialVersionUID = 3393999785215891222L;
+public class Plugin {
 
 /*------------------------------------------------
  	Global Constants
  ------------------------------------------------*/
 	/** Possible types of plugins; Naming convention: TYPE.NAME.txt */
 	public static enum Type { 
-		/** Describes a deck of cards */
+		/** Defines a deck of cards */
 		DECK, 
-		/** Describes a  game board */
+		/** Defines a game board and card piles */
 		BOARD, 
-		/** Describes the rules of a game */
-		RULES }
+		/** Defines the rules of a game */
+		RULES,
+		/** Briefly describe the game to players */
+		BRIEF}
 	
 	/** Directory where plugin files are found. */
 	public static final File DIRECTORY = new File(System.getProperty("user.dir").concat("/plugin"));
@@ -131,30 +126,47 @@ public class Plugin implements Serializable {
 		}
 		this.lines = new ArrayList<String>(lines);
 		this.filename = pluginFilename;
-		//Clean up file, bottom to top
-		for (int ndx = this.lines.size()-1; ndx >=0; --ndx) {
+		processFileLines(this.lines, true);
+	}
+	
+	/**
+	 * Process the specified lines of text, removing all comments, blank lines, and leading/trailing whitespace.
+	 * 
+	 * @param lines List of lines to be processed
+	 * @param toLowerCase set to <tt>true</tt> to make all text lower case
+	 */
+	public static void processFileLines(final List<String> lines, final boolean toLowerCase) {
+		for (int ndx = lines.size()-1; ndx >=0; --ndx) {
 			// remove leading/trailing whitespace
-			this.lines.set(ndx, this.lines.get(ndx).trim());
+			lines.set(ndx, lines.get(ndx).trim());
 			// remove blank lines, null lines, and line comments
-			if (this.lines.get(ndx).equals(PluginPattern.BLANK.toString()) ||
-				this.lines.get(ndx) == null ||
-				this.lines.get(ndx).startsWith(PluginPattern.COMMENT.toString())) {
-				this.lines.remove(ndx);
+			if (lines.get(ndx).equals(PluginPattern.BLANK.toString()) ||
+				lines.get(ndx) == null ||
+				lines.get(ndx).startsWith(PluginPattern.COMMENT.toString())) {
+				lines.remove(ndx);
 			// convert to lower case and remove end of line comments and trailing whitespace
 			} else {
-				this.lines.set(ndx, this.lines.get(ndx).toLowerCase());
-				if (this.lines.get(ndx).contains(PluginPattern.COMMENT.toString())) {
-					final String[] stripped = this.lines.get(ndx).split(PluginPattern.COMMENT.toString());
-					this.lines.set(ndx, stripped[0].trim());
+				if (toLowerCase) {
+					lines.set(ndx, lines.get(ndx).toLowerCase());
+				}
+				if (lines.get(ndx).contains(PluginPattern.COMMENT.toString())) {
+					final String[] stripped = lines.get(ndx).split(PluginPattern.COMMENT.toString());
+					lines.set(ndx, stripped[0].trim());
 				}
 			}
 		}
 	}
 	
-	/*
+	/**
 	 * Create and return a List of Strings found in the PluginFile.
+	 * 
+	 * @param pluginFile the pluginFile to be read
+	 * @return a List of Strings representing the lines of this file
 	 */
-	private static List<String> readPluginFile(final PluginFile pluginFile) throws PluginException {
+	public static List<String> readPluginFile(final PluginFile pluginFile) throws PluginException {
+		if (!pluginFile.exists() || pluginFile.isDirectory()) {
+			throw PluginException.create(PluginException.Type.DOES_NOT_EXIST, pluginFile.getFilename());
+		}
 		List<String> list;	
 		try {
 			list = Files.readAllLines(pluginFile.toPath(), Plugin.CHARSET);
@@ -214,14 +226,45 @@ public class Plugin implements Serializable {
 	}
 	
 	/**
+	 * Compare the specified keyword to the specified string.
+	 * Returns <tt>true</tt> if they are the same, ignoring case.
+	 * 
+	 * @param string the string to compare
+	 * @param keyword the keyword to be compared 
+	 * @return <tt>true</tt> if they are the same, ignoring case
+	 * @throws PluginException if the keyword and string do not match
+	 */
+	public void checkString(final PluginKeyword keyword, final String string) throws PluginException {
+		if (!keyword.compareToString(string)) {
+			throw PluginException.create(PluginException.Type.INVALID_KEYWORD, this, keyword.toString(), string);
+		}
+	}
+	
+	/**
 	 * Returns a String representing the specified line of the plugin file.
 	 *
 	 * @param index the index
 	 * @return String representing the specified line of the file
-	 * @throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
+	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size())
 	 */
 	public String getLine(final int index) throws IndexOutOfBoundsException {
 		return lines.get(index);
+	}
+	
+	/**
+	 * Returns <tt>true</tt> if the line at the specified index starts with the specified keyword.
+	 * 
+	 * @param keyword the keyword to be searched for
+	 * @param lineNdx index of the line to search
+	 * @return <tt>true</tt> if the line at the specified index starts with the specified keyword
+	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size())
+	 */
+	public boolean lineStartsWith(final PluginKeyword keyword, final int lineNdx) throws IndexOutOfBoundsException {
+		String line = this.getLine(lineNdx);
+		String string = keyword.toString();
+		return 	line.startsWith(string) && 								// Obligatory check, but also...
+				line.length() == string.length() ||						// Only word on line OR
+				Character.isWhitespace(line.charAt(string.length()));	// Next character is white space
 	}
 	
 	/**
@@ -330,7 +373,20 @@ public class Plugin implements Serializable {
 	 * @throws PluginException	if the keyword is not found
 	 */
 	public int checkIndexOf(final PluginKeyword keyword) throws PluginException {
-		final int index = this.getIndexOf(keyword);
+		return this.checkIndexOf(keyword, 0);
+	}
+	
+	/**
+	 * Returns the index of the first occurrence of the keyword, or -1 if not found.
+	 * Throws an exception is the keyword is not found.
+	 * 
+	 * @param keyword	keyword to be located
+	 * @param startNdx	file index to start searching for keyword
+	 * @return	index of the keyword, or -1 if not found.
+	 * @throws PluginException	if the keyword is not found
+	 */
+	public int checkIndexOf(final PluginKeyword keyword, final int startNdx) throws PluginException {
+		final int index = this.getIndexOf(keyword, startNdx);
 		if (index < 0) {
 			throw PluginException.create(PluginException.Type.MISSING_KEYWORD, filename, keyword.toString());
 		}
@@ -426,6 +482,25 @@ public class Plugin implements Serializable {
 	}
 	
 	/**
+	 * Returns the parameter(s) found after the specified keyword on the specified line.
+	 * Throws an exception if the keyword is not found or is missing parameters.
+	 * 
+	 * @param keyword keyword to be searched
+	 * @param line index of line to search
+	 * @return parameters found after the specified keyword
+	 * @throws PluginException	if the keyword or parameters are not found
+	 * @throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
+	 */
+	public String checkParamsFor(final PluginKeyword keyword, final int lineNdx) throws PluginException, IndexOutOfBoundsException {
+		String[] words = this.getLine(lineNdx).split(PluginPattern.WHITESPACE.toString(), 2);
+		this.checkString(keyword, words[0]);
+		if (words.length < 2) {
+			throw PluginException.create(PluginException.Type.MISSING_PARAMETER, this, words[0]);
+		}
+		return words[1];
+	}
+	
+	/**
 	 * Returns the parameter(s) found after the first occurrence of the specified keyword.
 	 * 
 	 * @param keyword	keyword to be searched
@@ -463,6 +538,29 @@ public class Plugin implements Serializable {
 			}
 		}
 		return PluginPattern.BLANK.toString();
+	}
+	
+	/**
+	 * Returns the numeric parameter found after the the keyword on the specified line.
+	 * Parameter must be a whole number.
+	 * 
+	 * @param keyword the keyword to be searched for
+	 * @param lineNdx index of the line to search
+	 * @return the numeric parameter found after the specified keyword, or -1 if no parameters are found
+	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size())
+	 * @throws PluginException if the keyword is not found or parameters are found but not numeric
+	 */
+	public int checkNumericParams(final PluginKeyword keyword, final int lineNdx) throws PluginException, IndexOutOfBoundsException {
+		int number = -1;
+		final String param = this.getParamsFor(keyword, lineNdx);
+		if (!param.equals(PluginPattern.BLANK.toString())) {
+			try {
+				number = Integer.valueOf(param);
+			} catch (NumberFormatException e) {
+				throw PluginException.create(PluginException.Type.INVALID_PARAMETER, e, this, keyword.toString(), param);
+			}
+		}
+		return number;
 	}
 	
 /*------------------------------------------------
@@ -505,9 +603,9 @@ public class Plugin implements Serializable {
 	Overridden Methods
  ------------------------------------------------*/
 	/**
-	 * Return all lines of this plugin as a string.
+	 * Returns all lines of this <tt>Plugin</tt> as a string.
 	 *
-	 * 	@return the string
+	 * @return all lines of this <tt>plugin</tt> as a string
  	 */
 	@Override public String toString() {
 		final StringBuilder str = new StringBuilder();

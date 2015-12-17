@@ -14,11 +14,6 @@
 ****************************************************************************/
 package games.engine.util;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import games.engine.plugin.Plugin;
 import games.engine.plugin.PluginException;
 import games.engine.plugin.PluginKeyword;
@@ -62,7 +57,7 @@ public enum CardDealerFactory {
 	public synchronized CardDealer createCardDealer(final Plugin rulesPlugin, final CardPileCollection commonPileCollecion, 
 													final Deck deck, final CardPlayer[] players) throws PluginException {
 		rulesPlugin.checkType(Plugin.Type.RULES);
-		final Plugin plugin = rulesPlugin.divide(PluginKeyword.DEAL, PluginKeyword.DEAL_END);
+		final Plugin plugin = rulesPlugin.divide(PluginKeyword.DEAL, PluginKeyword.END_DEAL);
 		
 		// Get Parameters
 		final boolean collate = PluginKeyword.COLLATE.getBooleanParams(plugin);

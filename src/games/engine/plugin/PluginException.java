@@ -16,6 +16,7 @@
 
 package games.engine.plugin;
 
+
 /******************************************************************//**
  * The PluginException Class
  * - Custom exception to consolidate issues involving plugin text files
@@ -41,8 +42,13 @@ public class PluginException extends Exception {
 	 * INVALID_TYPE - Invalid plugin type
 	 * FILE_READ_ERROR - Error reading pugin file.
 	 */
-	public static enum Type { 	INVALID_PARAMETER,
+	public static enum Type { 	INVALID_CONDITIONAL_STATEMENT,
+								INVALID_COMPONENT,
+								INVALID_OPERATION,
+								INVALID_OPERATION_PARAMS,
+								INVALID_PARAMETER,
 								MISSING_PARAMETER,
+								INVALID_KEYWORD,
 								MISSING_KEYWORD,
 								DOES_NOT_EXIST,
 								INVALID_NAME,
@@ -178,30 +184,48 @@ public class PluginException extends Exception {
 	 * @param type	specific type of plugin exception
 	 * @param cause	the original exception which caused this exception to be created
 	 * @param pluginFilename pluginFilename of the Plugin causing this exception
-	 * @param vars optional identifiers (in this order): filename, keyword, parameter
+	 * @param vars optional identifiers (in this order): keyword/operation, parameter/second-keyword
 	 * @return new PluginException
 	 */
 	public static final PluginException create(final PluginException.Type type, final Throwable cause, final PluginFilename pluginFilename, final String... vars) {
-		String keyword = vars.length > 0 ? keyword = vars[0] : UNKNOWN_VAR;
-		String parameter = vars.length > 1 ? parameter = vars[1] : UNKNOWN_VAR;
+		String var0 = vars.length > 0 ? vars[0] : UNKNOWN_VAR;
+		String var1 = vars.length > 1 ? vars[1] : UNKNOWN_VAR;
 		final StringBuilder str = new StringBuilder();
 		switch (type) {
+		case INVALID_CONDITIONAL_STATEMENT:
+			str.append(" Invalid conditional statement \"").append(var1)
+			   .append("\" for condition \"").append(var0).append(IN_PLUGIN);
+			break;
+		case INVALID_COMPONENT:
+			str.append(" Invalid component \"").append(var0).append(IN_PLUGIN);
+			break;
+		case INVALID_OPERATION:
+			str.append(" Invalid operation \"").append(var0).append(IN_PLUGIN);
+			break;
+		case INVALID_OPERATION_PARAMS:
+			str.append(" Invalid operation parameters for \"")
+			   .append(var0).append(IN_PLUGIN);
+			break;
 		case INVALID_PARAMETER:
-			str.append("Invalid parameter \"").append(parameter)
-			   .append("\" for keyword \"").append(keyword)
+			str.append("Invalid parameter \"").append(var1)
+			   .append("\" for keyword \"").append(var0)
 			   .append(IN_PLUGIN);
 			break;
 		case MISSING_PARAMETER:
-			str.append("Missing parameter for keyword \"").append(keyword);
+			str.append("Missing parameter for keyword \"").append(var0);
 			if (vars.length > 1) {
-				str.append("\" or \"").append(parameter);
+				str.append("\" or \"").append(var1);
 			}
 			str.append(IN_PLUGIN);
 			break;
+		case INVALID_KEYWORD:
+			str.append("Expected keyword \"").append(var0)
+			   .append("\" not \"").append(var1).append(IN_PLUGIN);
+			break;
 		case MISSING_KEYWORD:
-			str.append("Missing keyword \"").append(keyword);
+			str.append("Missing keyword \"").append(var0);
 			if (vars.length > 1) {
-				str.append("\" or \"").append(parameter);
+				str.append("\" or \"").append(var1);
 			}
 			str.append(IN_PLUGIN);
 			break;
@@ -219,10 +243,10 @@ public class PluginException extends Exception {
 			break;
 		case DATA_REPRESENTATION:
 			str.append("Data representation error for \"")
-			   .append(keyword).append(IN_PLUGIN);
+			   .append(var0).append(IN_PLUGIN);
 			break;
 		case MISMATCH:
-			str.append(keyword).append(" data mismatch in file: ");
+			str.append(var0).append(" data mismatch in file: ");
 			break;
 		default:
 			return new PluginException();

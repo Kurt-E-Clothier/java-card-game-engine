@@ -14,9 +14,7 @@
 ****************************************************************************/
 package games.engine.util;
 
-public final class PlayingCardGroup extends AbstractAttribute<PlayingCardGroup>{
-
-	private static final long serialVersionUID = 2386774442470183739L;
+public final class PlayingCardGroup extends PlayingCardAttribute<PlayingCardGroup>{
 
 	/**
 	 * Constructs a new <tt>PlayingCardGroup</tt> attribute.

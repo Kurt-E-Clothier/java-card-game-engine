@@ -16,17 +16,14 @@
 
 package games.engine.util;
 
-import java.io.Serializable;
-
 import games.Strings;
 
 /******************************************************************//**
  * The CardGameBoard Class
  * - A gameboard for a card game
  *********************************************************************/
-public class CardGameBoard implements Serializable {
+public class CardGameBoard {
 
-	//private static final long serialVersionUID = -5421440172268627745L;
 /*------------------------------------------------
  	Constants and Attributes
  ------------------------------------------------*/

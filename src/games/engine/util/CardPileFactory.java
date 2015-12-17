@@ -47,25 +47,25 @@ public enum CardPileFactory {
 	/**
 	 * Creates and returns a new <tt>CardPile</tt>.
 	 * 
-	 * @param pile Plugin used to create this card pile
+	 * @param plugin Board Plugin used to create this card pile
 	 * @return a new card pile
 	 * @throws PluginException for invalid file, keywords, or parameters
 	 */
-	public synchronized CardPile createCardPile(final Plugin pile) throws PluginException {
+	public synchronized CardPile createCardPile(final Plugin plugin) throws PluginException {
 		
-		String name = pile.checkParamsFor(PluginKeyword.NAME);
+		String name = plugin.checkParamsFor(PluginKeyword.NAME);
 		
 		// Get the parameters found after the plugin keywords - returned as an enum member
-		final CardPileParameter.Owner owner = PluginKeyword.OWNER.checkBoundedParams(pile, CardPileParameter.Owner.class);
-		final CardPileParameter.Visibility visibility = PluginKeyword.VISIBILITY.checkBoundedParams(pile, CardPileParameter.Visibility.class);
-		final CardPileParameter.Placement placement = PluginKeyword.PLACEMENT.checkBoundedParams(pile, CardPileParameter.Placement.class);
-		final CardPileParameter.Orientation orientation = PluginKeyword.ORIENTATION.checkBoundedParams(pile, CardPileParameter.Orientation.class);
-		final CardPileParameter.Removal removal = PluginKeyword.REMOVAL.checkBoundedParams(pile, CardPileParameter.Removal.class);
+		final CardPileParameter.Owner owner = PluginKeyword.OWNER.checkBoundedParams(plugin, CardPileParameter.Owner.class);
+		final CardPileParameter.Visibility visibility = PluginKeyword.VISIBILITY.checkBoundedParams(plugin, CardPileParameter.Visibility.class);
+		final CardPileParameter.Placement placement = PluginKeyword.PLACEMENT.checkBoundedParams(plugin, CardPileParameter.Placement.class);
+		final CardPileParameter.Orientation orientation = PluginKeyword.ORIENTATION.checkBoundedParams(plugin, CardPileParameter.Orientation.class);
+		final CardPileParameter.Removal removal = PluginKeyword.REMOVAL.checkBoundedParams(plugin, CardPileParameter.Removal.class);
 		CardPileParameter.Tiling tiling = null;
 		switch (placement) {
 		case SPREAD:
 		case SPACED:
-			tiling = PluginKeyword.TILING.checkBoundedParams(pile, CardPileParameter.Tiling.class);
+			tiling = PluginKeyword.TILING.checkBoundedParams(plugin, CardPileParameter.Tiling.class);
 			break;
 		default:
 			tiling = null;
@@ -73,53 +73,40 @@ public enum CardPileFactory {
 		}
 		// A bit of extra care for the "Visible" Keyword (can be a number or word)
 		int numVisible = 0;
-		CardPileParameter.Visible visible = PluginKeyword.VISIBLE.getBoundedParams(pile, CardPileParameter.Visible.values());
+		CardPileParameter.Visible visible = PluginKeyword.VISIBLE.getBoundedParams(plugin, CardPileParameter.Visible.values());
 		if (visible == null) {
 			visible = CardPileParameter.Visible.NUMBER;
-			numVisible = PluginKeyword.VISIBLE.checkPositiveNumericParams(pile);
+			numVisible = PluginKeyword.VISIBLE.checkPositiveNumericParams(plugin);
 		}
 		return new CardPile(new CardPileParameter(name, owner, visibility, visible, numVisible, placement, orientation, tiling, removal));
 	}
 	
 	/**
 	 * Create and return an array of <tt>Plugins</tt> for creating <tt>CardPiles</tt>.
-	 * If a rules plugin is passed, a board plugin will be created 
-	 * by parsing the rules for the "board" keyword.
 	 * 
-	 * @param plugin Plugin used to create this these CardPile plugins
+	 * @param plugin Board Plugin used to create this these CardPile plugins
 	 * @return array of card pile plugins
 	 * @throws PluginException for invalid file, keywords, or parameters
 	 */
 	public synchronized Plugin[] createPlugins(final Plugin plugin) throws PluginException {
 		
-		// Get correct Plugin file
-		Plugin board = null;
-		switch (plugin.getFilename().getType()) {
-		case RULES:
-			board = new Plugin(Plugin.Type.BOARD, plugin.checkParamsFor(PluginKeyword.BOARD));
-			break;
-		case BOARD:
-			board = plugin;
-			break;
-		default:
-			throw PluginException.create(PluginException.Type.INVALID_TYPE, plugin);
-		}
+		plugin.checkType(Plugin.Type.BOARD);
 		
-		int numPiles = board.getNumberOf(PluginKeyword.CARDPILE);
+		int numPiles = plugin.getNumberOf(PluginKeyword.CARDPILE);
 				
 		// Break Board into individual card piles
 		Plugin[] piles = new Plugin[numPiles];
-		int finish = board.checkIndexOf(PluginKeyword.CARDPILE);
+		int finish = plugin.checkIndexOf(PluginKeyword.CARDPILE);
 		int start = 0;
 				
 		// Create Plugin for each CardPile
 		for (int i = 0; i < numPiles; i++) {
 			start = finish + 1;
-			finish = board.getIndexOf(PluginKeyword.CARDPILE, start);
+			finish = plugin.getIndexOf(PluginKeyword.CARDPILE, start);
 			if (finish < 0) {
-				finish = board.getIndexOf(PluginKeyword.BOARD_LAYOUT);
+				finish = plugin.getIndexOf(PluginKeyword.BOARD_LAYOUT);
 			}
-			piles[i] = board.divide(start, finish);
+			piles[i] = plugin.divide(start, finish);
 		}
 		return piles;
 	}
@@ -160,19 +147,19 @@ public enum CardPileFactory {
 	 * Create a new <tt>CardPileLayout</tt> for the specified owner.
 	 * 
 	 * @param owner the owner of the piles in the layout to return
-	 * @param board Plugin containing layout
+	 * @param plugin Board Plugin containing layout
 	 * @return layout for the card piles of the specified owner
 	 * @throws PluginException for invalid file, keywords, or parameters
 	 */
-	public synchronized CardPileLayout createCardPileLayout(final CardPileParameter.Owner owner, final Plugin board) throws PluginException {
+	public synchronized CardPileLayout createCardPileLayout(final CardPileParameter.Owner owner, final Plugin plugin) throws PluginException {
 		// Make sure this is a board plugin...
-		board.checkType(Plugin.Type.BOARD);
+		plugin.checkType(Plugin.Type.BOARD);
 		
 		int start = 0;
 		int end = 0;
-		final int commonIndex = board.getIndexOf(PluginKeyword.COMMON_PILES);
-		final int playerIndex = board.getIndexOf(PluginKeyword.PLAYER_PILES);
-		final PluginKeywordCode code = board.compare(PluginKeyword.COMMON_PILES, PluginKeyword.PLAYER_PILES);
+		final int commonIndex = plugin.getIndexOf(PluginKeyword.COMMON_PILES);
+		final int playerIndex = plugin.getIndexOf(PluginKeyword.PLAYER_PILES);
+		final PluginKeywordCode code = plugin.compare(PluginKeyword.COMMON_PILES, PluginKeyword.PLAYER_PILES);
 
 		switch (owner) {
 		case COMMON:
@@ -181,7 +168,7 @@ public enum CardPileFactory {
 			
 			case A_EXISTS:
 			case A_GREATER:
-				end = board.getSize();
+				end = plugin.getSize();
 				break;
 			case B_GREATER:
 				end = playerIndex;
@@ -189,7 +176,7 @@ public enum CardPileFactory {
 			case B_EXISTS:
 			case NEITHER_EXISTS:
 			default:
-				throw PluginException.create(PluginException.Type.MISSING_KEYWORD, board, PluginKeyword.COMMON_PILES.toString());
+				throw PluginException.create(PluginException.Type.MISSING_KEYWORD, plugin, PluginKeyword.COMMON_PILES.toString());
 			}
 			break;
 			
@@ -199,7 +186,7 @@ public enum CardPileFactory {
 			
 			case B_EXISTS:
 			case B_GREATER:
-				end = board.getSize();
+				end = plugin.getSize();
 				break;
 			case A_GREATER:
 				end = playerIndex;
@@ -207,7 +194,7 @@ public enum CardPileFactory {
 			case A_EXISTS:
 			case NEITHER_EXISTS:
 			default:
-				throw PluginException.create(PluginException.Type.MISSING_KEYWORD, board, PluginKeyword.PLAYER_PILES.toString());
+				throw PluginException.create(PluginException.Type.MISSING_KEYWORD, plugin, PluginKeyword.PLAYER_PILES.toString());
 			}
 			break;
 			
@@ -215,13 +202,13 @@ public enum CardPileFactory {
 			throw new IllegalArgumentException("Switch case does not include all types of owners!");
 		}
 		if (start == end) {
-			throw PluginException.create(PluginException.Type.MISSING_PARAMETER, board, 
+			throw PluginException.create(PluginException.Type.MISSING_PARAMETER, plugin, 
 					PluginKeyword.COMMON_PILES.toString(), PluginKeyword.PLAYER_PILES.toString());
 		}
 		// Copy the layout text
 		final String[] lines = new String[end - start];
 		for (int i = 0; i < lines.length; i++) {
-			lines[i] = board.getLine(start++);
+			lines[i] = plugin.getLine(start++);
 		}
 		return new CardPileLayout(lines);
 	}
