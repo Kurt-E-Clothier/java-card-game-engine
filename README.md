@@ -32,6 +32,8 @@ The MIT License (MIT). See LICENSE.txt.
 	|	|
 	|	|___/games			=> java games package
 	|		|
+	|		|___/CardGameDriver.java	=> Main driver class for the engine and GUI
+	|		|
 	|		|___/engine			=> games engine package and core components
 	|			|
 	|			|___/gui			=> graphical user interface
