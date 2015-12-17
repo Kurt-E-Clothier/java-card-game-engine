@@ -74,18 +74,22 @@ class MainGUI extends JFrame implements ActionListener, MouseMotionListener, Mou
     Dimension screenSize;
 
 
-    MainGUI() {
+    public MainGUI() {
+
+        //        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        //might need to change the image path depending on build
+        try {
+            cardspic = getToolkit().getImage(this.getClass().getResource("/games/engine/images/cards.gif"));
+            back = getToolkit().getImage(this.getClass().getResource("/games/engine/images/back.gif"));
+            backSW = getToolkit().getImage(this.getClass().getResource("/games/engine/images/backSW.gif"));
+            title = getToolkit().getImage(this.getClass().getResource("/games/engine/images/Title.jpg"));
+            pointer[0] = getToolkit().getImage(this.getClass().getResource("/games/engine/images/pointer.gif"));
+            burntPic = getToolkit().getImage(this.getClass().getResource("/games/engine/images/burnt.jpg"));
+        } catch (Exception e) {
+            msg.setText("Image load Error" + e);
+        }
 
         MediaTracker tracker = new MediaTracker(this);
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        //might need to change the image path depending on build
-        cardspic = toolkit.getImage(this.getClass().getResource("games/engine/images/cards.gif"));
-        back = toolkit.getImage(this.getClass().getResource("games/engine/images/back.gif"));
-        backSW = toolkit.getImage(this.getClass().getResource("games/engine/images/backSW.gif"));
-        title = toolkit.getImage(this.getClass().getResource("games/engine/images/Title.jpg"));
-        pointer[0] = toolkit.getImage(this.getClass().getResource("games/engine/images/pointer.gif"));
-        burntPic = toolkit.getImage(this.getClass().getResource("games/engine/images/burnt.jpg"));
-
         tracker.addImage(cardspic, 1);
         tracker.addImage(back, 1);
         tracker.addImage(backSW, 1);
